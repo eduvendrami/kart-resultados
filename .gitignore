@@ -1,0 +1,6 @@
+# banco local (tem as anotações pessoais) e cópias de segurança
+kart.db
+kart.db.bak-*
+__pycache__/
+_*.html
+_list.txt

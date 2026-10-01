@@ -1,0 +1,1177 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meus Resultados de Kart</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#f4f5f7; --panel:#fff; --text:#1c1f24; --muted:#6b7280; --border:#e3e5e8;
+  --accent:#c8102e; --accent-soft:#fde8eb; --good:#15803d; --bad:#b91c1c; --purple:#7c3aed;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#111317; --panel:#1a1d23; --text:#e8eaed; --muted:#9aa0a8; --border:#2c3038;
+    --accent:#ff4d5e; --accent-soft:#3a1d22; --good:#4ade80; --bad:#f87171; --purple:#a78bfa; }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body.readonly .actions label,body.readonly .race-tools,body.readonly [data-rtab="notas"]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--panel);border-bottom:3px solid var(--accent)}
+h1{margin:0;font-size:20px}
+h2{margin:0 0 10px;font-size:15px}
+h3{margin:16px 0 6px;font-size:13px}
+.db{font-size:12px;font-weight:500;margin-left:10px;padding:2px 8px;border-radius:99px;vertical-align:middle}
+.db.ok{color:var(--good);border:1px solid var(--good)}
+.db.warn{color:var(--bad);border:1px solid var(--bad)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--border);background:var(--panel);color:var(--text);padding:7px 12px;border-radius:8px;cursor:pointer;font:inherit}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.danger{color:var(--bad)}
+main{max-width:1150px;margin:0 auto;padding:16px 20px}
+@media (max-width:860px){main{padding:12px 16px}}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px}
+.hint{color:var(--muted);font-size:12px;margin:6px 0}
+.small{font-size:12px;color:var(--muted)}
+.picker{display:flex;align-items:center;gap:8px;font-weight:600}
+#content{display:flex;flex-direction:column;gap:16px;min-width:0}
+.dropzone{border:2px dashed var(--border);border-radius:12px;padding:60px 20px;text-align:center;color:var(--muted);background:var(--panel)}
+body.dragging .dropzone,body.dragging .panel{border-color:var(--accent)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px 14px}
+.card .lbl{color:var(--muted);font-size:12px}
+.card .val{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.card .sub{color:var(--muted);font-size:12px}
+.panel-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px}
+.panel-head h2{margin:0}
+select,input[type=date],input[type=text]{padding:6px 8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit}
+.chart-wrap{position:relative;height:340px}
+.lapchart{position:relative;height:230px;margin:8px 0}
+.note{color:var(--muted);font-size:12px;margin:8px 0 0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
+th{font-size:12px;color:var(--muted);font-weight:600}
+td.r,th.r{text-align:right}
+.evo td{vertical-align:top}
+.evo td.sum{background:var(--bg)}
+.d{display:block;font-size:11px}
+.up{color:var(--good)} .down{color:var(--bad)}
+.purple{color:var(--purple);font-weight:700}
+.muted{color:var(--muted)}
+details.race{border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
+details.race summary{padding:10px 12px;cursor:pointer;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+details.race summary b{font-size:14px}
+.tag{font-size:11px;padding:2px 7px;border-radius:99px;background:var(--bg);border:1px solid var(--border);color:var(--muted)}
+.tag.on{color:var(--accent);border-color:var(--accent)}
+.race-body{padding:0 12px 12px}
+.race-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px}
+.stat{background:var(--bg);border-radius:8px;padding:8px 10px}
+.stat .lbl{font-size:11px;color:var(--muted)}
+.stat .val{font-weight:700;font-variant-numeric:tabular-nums}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px 12px;align-items:end}
+.notes label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted)}
+.notes textarea{min-height:54px;padding:6px 8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;resize:vertical}
+.notes .full{grid-column:1/-1}
+tr.grp td{background:var(--bg);font-weight:700;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+td.worst{background:var(--accent-soft)}
+.tip{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;margin-left:5px;padding:0;border-radius:50%;
+  border:1px solid var(--muted);background:none;color:var(--muted);font:700 10px/1 system-ui,sans-serif;cursor:help;vertical-align:middle;flex:none}
+.tip:hover,.tip:focus-visible{border-color:var(--accent);color:var(--accent);outline:none}
+#tipbox{position:fixed;z-index:20;max-width:310px;background:var(--text);color:var(--bg);font-size:12.5px;line-height:1.45;
+  padding:9px 11px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.25);font-weight:400;text-transform:none;letter-spacing:0;white-space:normal}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:8px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:10;max-width:90vw}
+#toast.show{opacity:1}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:9px 14px;font:inherit;font-weight:600;color:var(--muted);cursor:pointer}
+.tabs button.on{color:var(--text);border-bottom-color:var(--accent)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.kpi .val{font-size:26px}
+.kpi-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+ol.focus{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px}
+ul.good{margin:0;padding-left:20px;color:var(--good)}
+.view{display:flex;flex-direction:column;gap:16px}
+.subtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.subtab{border:1px solid var(--border);background:var(--bg);color:var(--muted);border-radius:99px;padding:4px 12px;font:inherit;font-size:13px;cursor:pointer}
+.subtab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+details.laptable{margin-top:10px}
+details.laptable summary{cursor:pointer;color:var(--accent);font-size:13px}
+th.c{text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏁 Meus Resultados de Kart <span id="dbStatus" class="db"></span></h1>
+  <div class="actions">
+    <label class="btn primary">Importar arquivos<input type="file" id="fileInput" accept=".html,.htm" multiple hidden></label>
+    <button class="btn" id="exportBtn">Exportar backup</button>
+    <label class="btn">Restaurar backup<input type="file" id="backupInput" accept=".json" hidden></label>
+  </div>
+</header>
+
+<main>
+  <section id="content">
+    <div id="empty" class="dropzone">
+      Arraste para cá os arquivos do kartódromo (.html): <b>resultados da prova</b>, <b>qualify (tomada de tempo)</b> e <b>tempo de voltas</b>.<br>
+      Ou clique em <b>Importar arquivos</b>.
+    </div>
+
+    <div id="dashboard" hidden>
+      <div class="toolbar">
+        <label class="picker">Piloto: <select id="driver"></select></label>
+        <span id="driverInfo" class="small"></span>
+      </div>
+      <nav class="tabs" style="margin:12px 0 16px">
+        <button type="button" data-tab="resumo">Resumo</button>
+        <button type="button" data-tab="evolucao">Evolução</button>
+        <button type="button" data-tab="corridas">Corridas</button>
+      </nav>
+
+      <div class="view" data-view="resumo">
+        <div id="kpis" class="kpis"></div>
+        <div class="panel">
+          <h2>Foco para a próxima corrida <button type="button" class="tip" data-tip="focus" aria-label="O que é isso?">?</button></h2>
+          <div id="focus"></div>
+        </div>
+        <div class="panel">
+          <h2>Última corrida <button type="button" class="tip" data-tip="lastRace" aria-label="O que é isso?">?</button></h2>
+          <div id="lastRace"></div>
+        </div>
+      </div>
+
+      <div class="view" data-view="evolucao" hidden>
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Evolução <button type="button" class="tip" data-tip="chart" aria-label="O que é isso?">?</button></h2>
+            <select id="metric"></select>
+          </div>
+          <p class="note" id="metricHelp" style="margin:0 0 8px"></p>
+          <div class="chart-wrap"><canvas id="chart"></canvas></div>
+          <p class="note" id="chartNote"></p>
+        </div>
+        <div class="panel">
+          <h2>Resumo da evolução <button type="button" class="tip" data-tip="evo" aria-label="O que é isso?">?</button></h2>
+          <div class="scroll"><table class="evo" id="evo"></table></div>
+        </div>
+        <div class="panel">
+          <h2>Setores <button type="button" class="tip" data-tip="evoSectors" aria-label="O que é isso?">?</button></h2>
+          <div class="scroll"><table class="evo" id="evoSectors"></table></div>
+        </div>
+      </div>
+
+      <div class="view" data-view="corridas" hidden>
+        <div class="panel">
+          <h2>Corridas <button type="button" class="tip" data-tip="races" aria-label="O que é isso?">?</button></h2>
+          <div id="races"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<div id="toast"></div>
+
+<script>
+const STORE_KEY = 'kart-resultados-v1';
+// Pilotos principais: aparecem primeiro no seletor (código entre colchetes no arquivo do kartódromo).
+// Todos os outros pilotos também são importados e aparecem depois, em ordem alfabética.
+const TRACKED = [
+  {code:'240461', name:'EDUARDO VENDRAMI'},
+  {code:'245424', name:'ISAAC LUCENA'},
+  {code:'245426', name:'RENATA FARIAS'},
+  {code:'245421', name:'REBECA RODRIGUES'},
+  {code:'214706', name:'VINICIUS ROSA ALVES'},
+  {code:'210649', name:'THIAGO BARROS'},
+  {code:'245465', name:'JAIRO LUCENA MARTINS'},
+];
+const SLOW_LAP = 1.2;   // voltas acima de 120% da melhor não entram na média/consistência
+
+let state = load();
+let chart = null;
+const lapCharts = new Map();
+let dbOnline = false;   // true quando o site foi aberto pelo server.py (banco kart.db)
+let readOnly = false;   // true na versão publicada (GitHub Pages), que lê data.json
+
+/* ---------- persistência ---------- */
+// As corridas ficam no banco (kart.db, via server.py). O navegador só guarda preferências,
+// ou tudo, se o site for aberto sem o servidor.
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(STORE_KEY));
+    if(s && Array.isArray(s.races)) return {races:s.races, view:s.view||null, tab:s.tab||'resumo'};
+  }catch(e){}
+  return {races:[], view:null, tab:'resumo'};
+}
+function save(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(dbOnline || readOnly ? {...state, races:[], openGroup:null} : {...state, openGroup:null})); }
+  catch(e){ if(!dbOnline) toast('Não foi possível salvar no navegador.'); }
+}
+async function api(method, path, body){
+  const res = await fetch('/api' + path, {method, headers:{'Content-Type':'application/json'}, body: body ? JSON.stringify(body) : undefined});
+  if(!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `erro ${res.status}`);
+  return res.json();
+}
+async function dbPut(race){ if(dbOnline) await api('PUT', '/races/' + encodeURIComponent(race.id), race); }
+async function dbDelete(id){ if(dbOnline) await api('DELETE', '/races/' + encodeURIComponent(id)); }
+const dbFail = e => toast('Erro ao salvar no banco: ' + e.message);
+
+async function connectDb(){
+  if(location.protocol.startsWith('http')){
+    try{
+      const local = state.races;
+      state.races = await api('GET', '/races');
+      dbOnline = true;
+      // corridas que estavam só no navegador vão para o banco
+      const novas = local.filter(r => !state.races.some(x => x.id === r.id));
+      for(const r of novas){ await dbPut(r); state.races.push(r); }
+      if(novas.length) toast(`${novas.length} corrida(s) do navegador copiada(s) para o banco`);
+    }catch(e){ dbOnline = false; }
+  }
+  // sem servidor: versão publicada, com a cópia dos dados em data.json (somente leitura)
+  if(!dbOnline && location.protocol.startsWith('http')){
+    try{
+      const res = await fetch('data.json', {cache:'no-store'});
+      if(res.ok){
+        const data = await res.json();
+        state.races = data.races;
+        readOnly = true;
+        document.body.classList.add('readonly');
+        var updated = data.generated ? new Date(data.generated).toLocaleDateString('pt-BR') : '';
+      }
+    }catch(e){}
+  }
+  const st = $('#dbStatus');
+  st.textContent = dbOnline ? '💾 Salvo no banco (kart.db)'
+                 : readOnly ? `🌐 Versão online · somente leitura${updated ? ' · atualizada em ' + updated : ''}`
+                 : '⚠ Sem banco: abra pelo "Abrir Kart.bat" para salvar';
+  st.className = 'db ' + (dbOnline || readOnly ? 'ok' : 'warn');
+}
+
+/* ---------- utilitários ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm = s => (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim().replace(/\.$/,'');
+const pad = n => String(n).padStart(2,'0');
+const toISO = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const brDate = iso => iso ? iso.slice(8,10)+'/'+iso.slice(5,7)+'/'+iso.slice(2,4) : '?';
+const mean = a => a.reduce((s,v) => s+v, 0) / a.length;
+const stdev = a => { const m = mean(a); return Math.sqrt(mean(a.map(v => (v-m)**2))); };
+
+function parseTime(s){
+  s = (s||'').trim();
+  if(!/^\d+(:\d+)*([.,]\d+)?$/.test(s)) return null;
+  return s.replace(',','.').split(':').reduce((a,p) => a*60 + parseFloat(p), 0);
+}
+function parseNum(s){
+  const n = parseFloat((s||'').trim().replace(',','.'));
+  return isFinite(n) ? n : null;
+}
+function fmtTime(sec){
+  if(sec==null) return '—';
+  if(sec < 60) return sec.toFixed(3);
+  const m = Math.floor(sec/60), r = sec - m*60;
+  return `${m}:${r.toFixed(3).padStart(6,'0')}`;
+}
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 4500);
+}
+const keyOf = x => x.code ? 'c'+x.code : 'n'+norm(x.name);
+const raceLabel = r => `${brDate(r.date)} ${r.time}`;
+const sortedRaces = () => [...state.races].sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
+const fastest = r => r.fastest ?? Math.min(...r.results.map(x => x.best).filter(v => v!=null));
+const fieldSize = r => r.fieldSize ?? r.results.length;
+// % do grid que terminou atrás: 100% = venceu, 0% = último
+const relPos = (x, r) => x?.pos && fieldSize(r) > 1 ? (fieldSize(r) - x.pos) / (fieldSize(r) - 1) * 100 : null;
+const pctOff = (x,r) => x.best==null ? null : (x.best/fastest(r) - 1) * 100;
+const KIND_LABEL = {prova:'prova', tomada:'qualify'};   // "tomada de tempo" nos arquivos do kartódromo
+const kindOf = r => r.kind || (/TOMADA/i.test(r.title||'') ? 'tomada' : 'prova');
+const sessionOf = r => r.session || ((r.title||'').match(/(?:PROVA|TOMADA)\s*(\d+)/i)||[])[1] || '';
+// prova e tomada do mesmo horário formam um "evento"; o id é fixo, mesmo se data/circuito forem editados
+const groupKey = r => r.id.replace(/TOMADA|PROVA/i, '#');
+
+// Completa os dados gerais da sessão (grid, vencedor, volta mais rápida, referências do grid)
+function prepSession(race){
+  if(race.fieldSize == null){
+    const best = Math.min(...race.results.map(x => x.best).filter(v => v!=null));
+    const winner = race.results.find(x => x.pos===1) || race.results[0];
+    race.fieldSize = race.results.length;
+    race.fastest = best;
+    race.fastestName = race.results.find(x => x.best===best)?.name || '';
+    race.winnerName = winner?.name || '';
+    race.ref = {...sessionRef(race.results), ...(race.ref || {})};
+  }
+  race.kind = kindOf(race);
+  race.session = sessionOf(race);
+  return race;
+}
+
+// números de referência do grid inteiro: melhores setores e velocidade
+function sessionRef(results){
+  const min = k => { const v = results.map(x => x[k]).filter(v => v != null); return v.length ? Math.min(...v) : null; };
+  const tops = results.map(x => x.top).filter(v => v != null);
+  const ref = {s1: min('s1'), s2: min('s2'), s3: min('s3')};
+  if(tops.length){ ref.topAvg = +mean(tops).toFixed(2); ref.topMax = Math.max(...tops); }
+  return ref;
+}
+
+/* ---------- leitura dos arquivos do kartódromo ---------- */
+const RESULT_COLS = {
+  pos:['pos'], no:['no'], code:['codigo'], name:['nome'], comment:['comentarios'],
+  laps:['voltas'], best:['melhor tempo'], total:['total tempo'], diff:['diff'], gap:['espaco'],
+  s1:['s1 melhor vlt'], s2:['s2 melhor vlt'], s3:['s3 melhor vlt'], top:['sfspd melhor vlt'],
+  avg:['velocidade media'], bestSpeed:['melhor veloc'], bestLapNo:['na volta']
+};
+const LAP_COLS = {
+  tod:['hora do dia'], lap:['volta'], leaderLap:['volta do lider'], time:['volta tm'], speed:['velocidade'],
+  sf:['sfspd'], sfTime:['sfspd tm'], s1:['s1'], s2:['s2'], s3:['s3']
+};
+
+function headerIndex(table, cols){
+  const headRow = [...table.querySelectorAll('tr')].find(tr => tr.querySelector('th'));
+  const headers = [...headRow.children].map(c => norm(c.textContent));
+  const idx = {};
+  for(const [k,names] of Object.entries(cols)){
+    const i = headers.findIndex(h => names.includes(h));
+    if(i >= 0) idx[k] = i;
+  }
+  return idx;
+}
+const dataTable = doc => [...doc.querySelectorAll('table')].find(t => t.querySelector('th'));
+const cellText = td => (td?.textContent || '').replace(/ /g,' ').trim();
+
+// cabeçalho comum: circuito, título, horário e data
+function sessionMeta(doc, fileName){
+  const header = (doc.querySelector('.headerbig')?.textContent || '').replace(/\s+/g,' ').trim();
+  const track = (header.match(/CIRCUITO\s*-?\s*([\w-]+)/i)||[])[1] || '?';
+  const venue = header.replace(/\s*CIRCUITO.*$/i,'').replace(/\s+a funcionar\b/i,'').trim();
+  const title = (doc.querySelector('.headersmall')?.textContent || doc.title || fileName)
+                  .replace(/\s+/g,' ').replace(/^(Resultados|Tempos de volta) de\s*/i,'').trim();
+  const hm = title.match(/(\d{1,2}):(\d{2})\s*$/);
+  const time = hm ? pad(hm[1])+':'+hm[2] : '';
+  // data: vem de "Gerada em dd/mm/aaaa hh:mm"; se foi gerada depois da meia-noite, a corrida foi no dia anterior
+  let date = toISO(new Date());
+  const gm = (doc.querySelector('.save')?.textContent || '').match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/);
+  if(gm){
+    const d = new Date(+gm[3], +gm[2]-1, +gm[1]);
+    if(time && `${gm[4]}:${gm[5]}` < time) d.setDate(d.getDate()-1);
+    date = toISO(d);
+  }
+  return { id:[date,time,track,title].join('|'), title, venue, track, date, time, fileName };
+}
+const fileType = doc => /^tempos de volta/.test(norm(doc.querySelector('.headersmall')?.textContent || doc.title)) ? 'laps' : 'results';
+
+function parseResults(doc, fileName){
+  const table = dataTable(doc);
+  if(!table) throw new Error('tabela de resultados não encontrada');
+  const idx = headerIndex(table, RESULT_COLS);
+  if(idx.pos==null || idx.name==null) throw new Error('colunas Pos/Nome não encontradas');
+  const results = [];
+  for(const tr of table.querySelectorAll('tr')){
+    if(tr.querySelector('th')) continue;
+    const cells = [...tr.children].map(cellText);
+    const get = k => idx[k]!=null ? (cells[idx[k]]||'') : '';
+    let name = get('name');
+    let code = (get('code').match(/\d+/)||[])[0] || null;
+    const pre = name.match(/^\[(\d+)\]\s*/);          // às vezes o código vem grudado no nome
+    if(pre){ code = code || pre[1]; name = name.slice(pre[0].length); }
+    name = name.replace(/\s+/g,' ').trim();
+    if(!name) continue;
+    results.push({
+      pos: parseInt(get('pos')) || null, no: get('no'), code, name, comment: get('comment'),
+      laps: parseInt(get('laps')) || 0, best: parseTime(get('best')), total: parseTime(get('total')),
+      diff: get('diff'), gap: get('gap'), s1: parseTime(get('s1')), s2: parseTime(get('s2')), s3: parseTime(get('s3')),
+      top: parseNum(get('top')), avg: parseNum(get('avg')), bestSpeed: parseNum(get('bestSpeed')), bestLapNo: parseInt(get('bestLapNo')) || null
+    });
+  }
+  if(!results.length) throw new Error('nenhum piloto encontrado');
+  return prepSession({ ...sessionMeta(doc, fileName), results });
+}
+
+function parseLaps(doc, fileName){
+  const table = dataTable(doc);
+  if(!table) throw new Error('tabela de voltas não encontrada');
+  const idx = headerIndex(table, LAP_COLS);
+  if(idx.lap==null || idx.time==null) throw new Error('colunas Volta/Volta Tm não encontradas');
+  // o número da volta em azul marca passagem pelo box; o nome da classe muda entre arquivos, a cor não
+  const pitClasses = new Set([...(doc.querySelector('style')?.textContent || '')
+    .matchAll(/td\.(\w+)\s*\{[^}]*background-color:\s*rgb\(\s*23,\s*145,\s*217\s*\)/g)].map(m => m[1]));
+  const blocks = []; let cur = null;
+  for(const tr of table.querySelectorAll('tr')){
+    if(tr.querySelector('th')) continue;
+    const head = tr.querySelector('td[colspan]');
+    if(head){   // "024 - NICOLAS COLANERI - RENTAL"
+      const t = cellText(head).replace(/\s+/g,' ');
+      const m = t.match(/^(\d+)\s*-\s*(.+?)\s*-\s*[^-]+$/);
+      cur = {no: m ? m[1] : '', name: (m ? m[2] : t).replace(/^\[\d+\]\s*/, ''), laps: []};   // às vezes vem "[código] NOME"
+      blocks.push(cur); continue;
+    }
+    if(!cur) continue;
+    const tds = [...tr.children];
+    const get = k => idx[k]!=null ? cellText(tds[idx[k]]) : '';
+    const lap = parseInt(get('lap'));
+    if(!lap) continue;
+    cur.laps.push({
+      lap, tod: get('tod'), leaderLap: parseInt(get('leaderLap')) || null, time: parseTime(get('time')),
+      speed: parseNum(get('speed')), sf: parseNum(get('sf')), sfTime: parseTime(get('sfTime')),
+      s1: parseTime(get('s1')), s2: parseTime(get('s2')), s3: parseTime(get('s3')),
+      pit: [...(tds[idx.lap]?.classList || [])].some(c => pitClasses.has(c))
+    });
+  }
+  if(!blocks.length) throw new Error('nenhum piloto encontrado');
+  // referência do grid a partir do volta a volta de todos: melhores setores reais e velocidade máx. de cada um
+  const all = blocks.flatMap(b => b.laps);
+  const min = k => { const v = all.map(l => l[k]).filter(v => v != null); return v.length ? Math.min(...v) : null; };
+  const tops = blocks.map(b => Math.max(...b.laps.map(l => l.sf ?? -1))).filter(v => v > 0);
+  const ref = {s1: min('s1'), s2: min('s2'), s3: min('s3'), fromLaps: true};
+  if(tops.length){ ref.topAvg = +mean(tops).toFixed(2); ref.topMax = Math.max(...tops); }
+  return { ...sessionMeta(doc, fileName), blocks, ref };
+}
+
+// junta o tempo de voltas na sessão (prova ou tomada) já importada
+async function attachLaps(lp){
+  const kind = kindOf(lp);
+  const race = state.races.find(r => r.id === lp.id)
+            || state.races.find(r => kindOf(r) === kind && groupKey(r) === groupKey(lp));
+  if(!race) throw new Error(`importe antes o arquivo de resultados dessa sessão (${KIND_LABEL[kind]})`);
+  let n = 0;
+  for(const x of race.results){
+    const b = lp.blocks.find(b => +b.no === +x.no && norm(x.name).startsWith(norm(b.name).slice(0,5)))
+           || lp.blocks.find(b => norm(x.name).startsWith(norm(b.name)) || norm(b.name).startsWith(norm(x.name)));
+    if(b){ x.lapTimes = b.laps; n++; }
+  }
+  if(!n) throw new Error('nenhum piloto desse arquivo de voltas foi encontrado na sessão');
+  race.ref = {...(race.ref || {}), ...lp.ref};
+  await dbPut(race);
+  return n;
+}
+
+async function importFiles(files){
+  const docs = [];
+  const errors = [];
+  for(const f of files){
+    try{ docs.push({f, doc: new DOMParser().parseFromString(await f.text(), 'text/html')}); }
+    catch(e){ errors.push(`${f.name}: ${e.message}`); }
+  }
+  let added = 0, dup = 0, updated = 0, lapFiles = 0;
+  // resultados (prova e tomada) primeiro, depois o tempo de voltas, que depende deles
+  for(const {f, doc} of docs.filter(d => fileType(d.doc) === 'results')){
+    try{
+      const race = parseResults(doc, f.name);
+            const old = state.races.find(r => r.id === race.id);
+      if(old){
+        // sessão já existe: só acrescenta pilotos que ainda não estavam nela
+        // e completa a referência do grid, se essa sessão foi importada antes de existir
+        const novos = race.results.filter(x => !old.results.some(y => keyOf(y) === keyOf(x)));
+        const refNova = Object.keys(race.ref || {}).some(k => race.ref[k] != null && old.ref?.[k] == null);
+        if(!novos.length && !refNova){ dup++; continue; }
+        old.ref = {...(race.ref || {}), ...(old.ref || {})};
+        old.results = [...old.results, ...novos].sort((a,b) => (a.pos ?? 999) - (b.pos ?? 999));
+        await dbPut(old); updated++;
+        continue;
+      }
+      await dbPut(race);
+      state.races.push(race); added++;
+    }catch(e){ errors.push(`${f.name}: ${e.message}`); }
+  }
+  for(const {f, doc} of docs.filter(d => fileType(d.doc) === 'laps')){
+    try{ await attachLaps(parseLaps(doc, f.name)); lapFiles++; }
+    catch(e){ errors.push(`${f.name}: ${e.message}`); }
+  }
+  save(); render();
+  const parts = [];
+  if(added) parts.push(`${added} sessão(ões) importada(s)`);
+  if(updated) parts.push(`${updated} atualizada(s)`);
+  if(lapFiles) parts.push(`tempo de voltas importado (${lapFiles} arquivo(s))`);
+  if(dup) parts.push(`${dup} já existia(m)`);
+  if(errors.length) parts.push(`erro em ${errors.join('; ')}`);
+  toast(parts.join(' · ') || 'Nada importado');
+}
+
+// Completa campos que versões antigas das sessões salvas não tinham
+function applyTracking(){
+  for(const r of state.races){
+    const n = r.results.length, complete = r.fieldSize != null && r.kind && r.session != null;
+    prepSession(r);
+    if(r.results.length !== n || !complete) dbPut(r).catch(dbFail);
+  }
+  for(const r of state.races.filter(r => !r.results.length)) dbDelete(r.id).catch(dbFail);
+  state.races = state.races.filter(r => r.results.length);
+  save();
+}
+
+/* ---------- dados do piloto ---------- */
+function driverIndex(){
+  const map = new Map();
+  for(const r of state.races) for(const x of r.results){
+    const k = keyOf(x);
+    let d = map.get(k);
+    if(!d){ d = {key:k, name:x.name}; map.set(k,d); }
+    if(x.name.length > d.name.length) d.name = x.name;   // guarda a versão mais completa do nome
+  }
+  return map;
+}
+
+// estatísticas do volta a volta (r = sessão, para comparar com os melhores setores do grid)
+function lapStats(x, r){
+  const L = (x?.lapTimes || []).filter(l => l.time != null);
+  if(!L.length) return null;
+  const best = Math.min(...L.map(l => l.time));
+  const clean = L.filter(l => !l.pit && l.time <= best * SLOW_LAP);
+  const minOf = k => { const v = L.map(l => l[k]).filter(v => v != null); return v.length ? Math.min(...v) : null; };
+  const sec = {};
+  for(const k of ['s1','s2','s3']){
+    const b = minOf(k), v = clean.map(l => l[k]).filter(v => v != null), ref = r?.ref?.[k];
+    sec[k] = {best: b, avg: v.length ? mean(v) : null, irr: v.length && b != null ? mean(v) - b : null,
+              loss: b != null && ref != null ? b - ref : null, ref};
+  }
+  // ritmo: voltas válidas (sem a 1ª, que tem a largada) divididas em início, meio e fim
+  const run = clean.filter(l => l.lap > 1), n = run.length;
+  const third = (a,b) => { const p = run.slice(a,b); return p.length ? mean(p.map(l => l.time)) : null; };
+  const thirds = n >= 3 ? [third(0, Math.round(n/3)), third(Math.round(n/3), Math.round(2*n/3)), third(Math.round(2*n/3), n)] : [null,null,null];
+  const sfs = L.map(l => l.sf).filter(v => v != null);
+  return {
+    n: L.length, clean: clean.length, best, sec, thirds,
+    avg: clean.length ? mean(clean.map(l => l.time)) : null,
+    sd: clean.length > 1 ? stdev(clean.map(l => l.time)) : null,
+    within: L.filter(l => !l.pit && l.time <= best + 0.5).length / L.length * 100,
+    errors: L.filter(l => !l.pit && l.time > best * SLOW_LAP).length,
+    lap1: L.find(l => l.lap === 1)?.time ?? null,
+    s1: sec.s1.best, s2: sec.s2.best, s3: sec.s3.best,
+    ideal: sec.s1.best!=null && sec.s2.best!=null && sec.s3.best!=null ? sec.s1.best+sec.s2.best+sec.s3.best : null,
+    top: sfs.length ? Math.max(...sfs) : null,
+    bestLap: L.find(l => l.time === best)?.lap
+  };
+}
+const topOf = (x, r) => x?.top ?? lapStats(x, r)?.top ?? null;
+const spdVsGrid = (x, r) => { const t = topOf(x, r), g = r?.ref?.topAvg; return t != null && g != null ? t - g : null; };
+
+// provas do piloto em ordem, com a tomada do mesmo evento e as estatísticas de voltas
+function entriesFor(k){
+  const tomadas = state.races.filter(r => kindOf(r) === 'tomada');
+  return sortedRaces().filter(r => kindOf(r) === 'prova').map(r => {
+    const x = r.results.find(x => keyOf(x) === k);
+    if(!x) return null;
+    const t = tomadas.find(t => groupKey(t) === groupKey(r));
+    return {r, x, t, q: t?.results.find(y => keyOf(y) === k) || null, st: lapStats(x, r)};
+  }).filter(Boolean);
+}
+
+/* ---------- explicações (botão "?") ---------- */
+const SECTOR_LOSS = 'Seu melhor tempo neste setor menos o melhor tempo de qualquer piloto da sessão no mesmo setor. Mostra onde falta técnica: traçado, ponto de freada, saída de curva. Quanto menor, melhor.';
+const SECTOR_IRR = 'Sua média neste setor menos o seu melhor neste setor. Mostra onde você não consegue repetir o que já fez, ou seja, onde mais erra. Quanto menor, mais constante.';
+const HELP = {
+  // desempenho (os 4 números principais)
+  pct: 'Velocidade: quanto a sua melhor volta ficou acima da volta mais rápida da prova (de qualquer piloto). 0% = você fez a mais rápida. Como compara você com quem estava na pista nas mesmas condições, serve para comparar corridas diferentes. Quanto menor, melhor.',
+  pace: 'Ritmo de corrida: quanto a MÉDIA das suas voltas ficou acima da volta mais rápida da prova. Corrida se ganha com a média, não com uma volta isolada. Quanto menor, melhor. Precisa do arquivo de tempo de voltas.',
+  sd: 'Consistência: o quanto as suas voltas variam entre si (desvio padrão). ±0,5s = muito constante; ±2s = voltas bem diferentes umas das outras. Ganhar consistência costuma vir antes de ganhar velocidade. Precisa do arquivo de tempo de voltas.',
+  rel: 'Resultado: quantos % dos outros pilotos terminaram atrás de você. 100% = venceu; 0% = chegou em último. Ex.: 17º de 24 = 30%. Diferente da posição pura, permite comparar grids de tamanhos diferentes. Quanto maior, melhor.',
+  // diagnóstico
+  gapIdeal: 'Tempo ao alcance: sua melhor volta menos a sua volta ideal (soma dos seus melhores S1, S2 e S3, mesmo em voltas diferentes). É tempo que você já provou que consegue fazer; falta juntar tudo numa volta só. Quanto menor, melhor.',
+  gain: 'Posição de largada (qualify) menos posição de chegada. Positivo = você ganhou posições durante a prova; negativo = perdeu.',
+  lap1gap: 'Largada: quanto a sua 1ª volta (que inclui a largada) foi mais lenta que a sua melhor volta. Mostra como você larga e se posiciona no pelotão. Quanto menor, melhor.',
+  fade: 'Queda no fim: ritmo do último terço da prova menos o ritmo do terço do meio. Positivo = você ficou mais lento no final (cansaço, pneu, concentração); negativo = terminou mais forte.',
+  grid: 'Kart vs grid: sua velocidade máxima na reta menos a média de todos os pilotos da sessão. Positivo = seu kart (ou sua saída da última curva) estava acima da média; negativo = abaixo. Ajuda a separar "o kart era ruim" de "eu fui lento".',
+  losss1: SECTOR_LOSS, losss2: SECTOR_LOSS, losss3: SECTOR_LOSS,
+  irrs1: SECTOR_IRR, irrs2: SECTOR_IRR, irrs3: SECTOR_IRR,
+  // abas e blocos
+  focus: 'Pontos para trabalhar na próxima corrida, calculados a partir da corrida mais recente que tem tempo de voltas, do mais importante para o menos importante.',
+  strengths: 'O que melhorou ou funcionou bem na corrida mais recente.',
+  lastRace: 'Os principais números da corrida mais recente desse piloto.',
+  chart: 'Gráfico da métrica escolhida em todas as corridas, em ordem de data. A linha tracejada é a tendência (aparece com 3 ou mais corridas).',
+  evo: 'Resumo das métricas considerando todas as corridas do piloto. Use para ver em que você está evoluindo e em que está estagnado.',
+  evoSectors: 'Como a perda e a irregularidade em cada setor evoluíram ao longo das corridas.',
+  races: 'Cada noite de corrida, com qualify, prova e volta a volta. Clique numa corrida para abrir os detalhes.',
+  // colunas da evolução
+  colLast: 'Valor da corrida mais recente e, embaixo, a diferença para a corrida anterior. Verde = melhorou, vermelho = piorou.',
+  colAvg: 'Média de todas as corridas que têm esse dado.',
+  colBest: 'O seu melhor resultado nessa métrica e em que corrida foi.',
+  colTrend: 'Quanto você melhora ou piora por corrida, em média, considerando todas (linha de tendência). Precisa de pelo menos 3 corridas.',
+  colHist: 'Mini-gráfico com todas as corridas em ordem de data. Para cima sempre significa melhor.',
+  // tabela da sessão
+  session: 'Qualify (tomada de tempo) = voltas cronometradas antes da prova, que definem a ordem de largada. Prova = a corrida em si.',
+  thPos: 'Posição final na sessão e quantos pilotos participaram.',
+  thKart: 'Número do kart usado. Em kart de aluguel cada kart tem desempenho um pouco diferente.',
+  thLaps: 'Voltas completadas na sessão.',
+  best: 'Sua volta mais rápida na sessão.',
+  thPct: 'Quanto a sua melhor volta ficou acima da volta mais rápida da sessão. Quanto menor, melhor.',
+  thTotal: 'Tempo total que você ficou na pista na sessão.',
+  thDiff: 'Diferença para o 1º colocado, em tempo ou em voltas.',
+  thGap: 'Diferença para o piloto logo à sua frente.',
+  thSectors: 'S1, S2 e S3 são os três trechos em que a pista é dividida para cronometragem. Aqui aparecem os seus melhores tempos em cada um.',
+  thTop: 'Velocidade máxima na reta de chegada, em km/h.',
+  // volta a volta
+  avg: 'Média das suas voltas válidas (sem box e sem voltas com erro). É o seu ritmo real de corrida.',
+  ideal: 'Soma dos seus melhores S1, S2 e S3, mesmo que tenham sido em voltas diferentes. É a volta que você já provou que consegue fazer.',
+  lapByLap: 'Todas as suas voltas da sessão, com o tempo de cada setor. Em roxo: melhor volta e melhores setores; em cinza: voltas de box ou com erro.',
+  bestSectors: 'Os seus melhores tempos em S1, S2 e S3 na sessão, que podem ter sido em voltas diferentes.',
+  valid: 'Voltas usadas na média, na consistência, nos setores e no ritmo: exclui voltas de box e voltas mais de 20% mais lentas que a melhor.',
+  lapDelta: 'Quanto essa volta ficou acima da sua melhor volta.',
+  lapSpeed: 'Velocidade na reta de chegada nessa volta.',
+  leaderLap: 'Em que volta o líder estava quando você completou essa volta. Se o número do líder passar à frente do seu, você levou volta.',
+  sectors: 'A pista é dividida em três trechos (S1, S2 e S3). Comparar cada trecho mostra em que parte da pista você perde tempo, o que a melhor volta sozinha não mostra.',
+  secBest: 'O seu melhor tempo neste setor na sessão.',
+  secRef: 'O melhor tempo de qualquer piloto da sessão neste setor.',
+  secLoss: SECTOR_LOSS,
+  secAvg: 'A sua média neste setor nas voltas válidas.',
+  secIrr: SECTOR_IRR,
+  rhythm: 'Como o seu ritmo mudou ao longo da prova: largada, início, meio e fim. Mostra se você demora a entrar no ritmo ou se cai no final.',
+  start: 'Média das suas voltas válidas no primeiro terço da prova (sem a 1ª volta). Início lento costuma ser pneu frio ou tráfego da largada.',
+  mid: 'Média das suas voltas válidas no terço do meio da prova.',
+  end: 'Média das suas voltas válidas no último terço da prova. Fim lento costuma ser cansaço, pneu gasto ou perda de concentração.',
+  lap1: 'Tempo da primeira volta, que inclui a largada.',
+  errors: 'Voltas mais de 20% mais lentas que a sua melhor, sem contar box: rodadas, saídas de pista, toques ou tráfego pesado. Ficam fora da média e da consistência.',
+  kartLine: 'Compara a velocidade máxima do seu kart na reta com a média de todos os pilotos da sessão. Acima da média = kart bom (ou boa saída da última curva); abaixo = kart mais fraco.',
+  notes: 'Anote o que os arquivos não registram: sensação do kart, pista, clima, peso e observações. Ajuda a entender corridas que fogem do padrão.',
+};
+const tip = k => HELP[k] ? `<button type="button" class="tip" data-tip="${k}" aria-label="O que é isso?">?</button>` : '';
+
+/* ---------- métricas ---------- */
+const sec = d => `${d<0?'−':'+'}${Math.abs(d).toFixed(2)}s`;
+const signed = (d, dec=0, unit='') => `${d>0?'+':'−'}${Math.abs(d).toFixed(dec)}${unit}`;
+const plusSec = v => (v<0?'−':'+')+Math.abs(v).toFixed(3)+'s';
+const pctFmt = v => '+'+v.toFixed(1)+'%';
+const pp = d => signed(d,1,' p.p.');
+const LOSS = {lower:true, fmt:v => (v<0?'−':'+')+Math.abs(v).toFixed(2)+'s', diff:sec};
+const METRICS = [
+  {g:'Desempenho', key:'pct',  label:'Velocidade (% acima da volta mais rápida)', short:'Velocidade', sub:'melhor volta vs a mais rápida da prova',
+   get:o=>pctOff(o.x,o.r), lower:true, fmt:pctFmt, diff:pp},
+  {g:'Desempenho', key:'pace', label:'Ritmo de corrida (média, % acima da mais rápida)', short:'Ritmo de corrida', sub:'média das voltas vs a mais rápida da prova',
+   get:o=>o.st?.avg!=null ? (o.st.avg/fastest(o.r) - 1)*100 : null, lower:true, fmt:pctFmt, diff:pp},
+  {g:'Desempenho', key:'sd',   label:'Consistência (variação das voltas)', short:'Consistência', sub:'quanto suas voltas variam',
+   get:o=>o.st?.sd, lower:true, fmt:v=>'±'+v.toFixed(2)+'s', diff:sec},
+  {g:'Desempenho', key:'rel',  label:'Resultado (à frente de % do grid)', short:'Resultado', sub:'% do grid que chegou atrás',
+   get:o=>relPos(o.x,o.r), fmt:v=>Math.round(v)+'%', diff:d=>signed(d,0,' p.p.')},
+  {g:'Diagnóstico', key:'gapIdeal', label:'Tempo ao alcance (melhor volta − volta ideal)', get:o=>o.st?.ideal!=null ? o.st.best - o.st.ideal : null, ...LOSS},
+  {g:'Diagnóstico', key:'gain',     label:'Posições ganhas (largada → chegada)', get:o=>o.q && o.x.pos ? o.q.pos - o.x.pos : null, int:true,
+   fmt:v=>v===0?'0':signed(v), diff:d=>signed(d)},
+  {g:'Diagnóstico', key:'lap1gap',  label:'Largada (1ª volta − sua melhor)', get:o=>o.st?.lap1!=null ? o.st.lap1 - o.st.best : null, ...LOSS},
+  {g:'Diagnóstico', key:'fade',     label:'Queda no fim (fim − meio da prova)', get:o=>o.st?.thirds[2]!=null && o.st?.thirds[1]!=null ? o.st.thirds[2]-o.st.thirds[1] : null, ...LOSS},
+  {g:'Contexto', key:'grid', label:'Kart vs média do grid (reta)', get:o=>spdVsGrid(o.x,o.r), fmt:v=>signed(v,1,' km/h'), diff:d=>signed(d,1,' km/h')},
+  ...['s1','s2','s3'].flatMap(k => [
+    {g:'Setores', sector:k, key:'loss'+k, label:`${k.toUpperCase()}: perda para o melhor da sessão`, get:o=>o.st?.sec[k].loss, ...LOSS},
+    {g:'Setores', sector:k, key:'irr'+k,  label:`${k.toUpperCase()}: irregularidade`, get:o=>o.st?.sec[k].irr, ...LOSS},
+  ]),
+];
+const M = Object.fromEntries(METRICS.map(m => [m.key, m]));
+const KPIS = ['pct','pace','sd','rel'].map(k => M[k]);
+
+// diferença colorida entre dois valores da mesma métrica
+function deltaHtml(m, v, prev){
+  if(v == null || prev == null) return '';
+  let d = v - prev;
+  if(!m.int) d = +d.toFixed(3);
+  if(d === 0) return '<span class="d muted">= igual</span>';
+  const better = m.lower ? d < 0 : d > 0;
+  return `<span class="d ${better?'up':'down'}">${better?'▲':'▼'} ${m.diff(d)}</span>`;
+}
+// inclinação (mínimos quadrados) da série: quanto muda por corrida
+function slope(vals){
+  if(vals.length < 3) return null;
+  const xs = vals.map((_,i) => i), mx = mean(xs), my = mean(vals);
+  return vals.reduce((s,v,i) => s + (i-mx)*(v-my), 0) / xs.reduce((s,x) => s + (x-mx)**2, 0);
+}
+function trendHtml(m, vals){
+  const b = slope(vals);
+  if(b == null) return '<span class="small">precisa de 3+ corridas</span>';
+  const step = m.int ? Math.round(b) : +b.toFixed(3);
+  return step === 0 ? '<span class="small">estável</span>' : deltaHtml(m, step, 0).replace('</span>', ' /corrida</span>');
+}
+// mini-gráfico com todas as corridas; "para cima" é sempre melhor
+function sparkline(m, vals, w=120, h=26){
+  if(vals.length < 2) return '';
+  const min = Math.min(...vals), max = Math.max(...vals), span = (max - min) || 1;
+  const y = v => { const t = (v - min) / span; return 3 + (m.lower ? t : 1 - t) * (h - 6); };
+  const pts = vals.map((v,i) => `${(i/(vals.length-1)*(w-6)+3).toFixed(1)},${y(v).toFixed(1)}`);
+  const last = pts.at(-1).split(',');
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">
+    <polyline points="${pts.join(' ')}" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linejoin="round"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="2.6" fill="var(--accent)"/></svg>`;
+}
+const series = (m, E) => E.map(o => ({o, v: m.get(o) ?? null})).filter(p => p.v != null);
+
+/* ---------- seletor de piloto ---------- */
+// principais primeiro, depois todos os outros; os dois grupos em ordem alfabética
+function renderPicker(drivers){
+  const byName = (a,b) => drivers.get(a).name.localeCompare(drivers.get(b).name, 'pt-BR');
+  const mainKeys = TRACKED.map(t => 'c'+t.code).filter(k => drivers.has(k)).sort(byName);
+  const others = [...drivers.keys()].filter(k => !mainKeys.includes(k)).sort(byName);
+  if(!drivers.has(state.view)) state.view = mainKeys[0] || others[0] || null;
+  const opts = keys => keys.map(k => `<option value="${esc(k)}">${esc(drivers.get(k).name)}</option>`).join('');
+  $('#driver').innerHTML = (mainKeys.length ? `<optgroup label="Principais">${opts(mainKeys)}</optgroup>` : '')
+                         + (others.length ? `<optgroup label="Outros pilotos (${others.length})">${opts(others)}</optgroup>` : '');
+  $('#driver').value = state.view;
+}
+
+/* ---------- aba Resumo ---------- */
+function renderKpis(E){
+  $('#kpis').innerHTML = KPIS.map(m => {
+    const s = series(m, E);
+    if(!s.length) return `<div class="card kpi"><div class="lbl">${m.short}${tip(m.key)}</div><div class="val muted">—</div>
+      <div class="sub">precisa do arquivo de tempo de voltas</div></div>`;
+    const last = s.at(-1), prev = s.at(-2), vals = s.map(p => p.v);
+    let avg = mean(vals);
+    return `<div class="card kpi"><div class="lbl">${m.short}${tip(m.key)}</div>
+      <div class="kpi-row"><div class="val">${m.fmt(last.v)}</div>${sparkline(m, vals, 110, 34)}</div>
+      ${prev ? deltaHtml(m, last.v, prev.v).replace('</span>', ' vs anterior</span>') : '<span class="d small">só 1 corrida</span>'}
+      <div class="sub">${m.sub} · média ${m.fmt(avg)}</div></div>`;
+  }).join('');
+}
+
+// pontos a trabalhar e pontos fortes, a partir da corrida mais recente com volta a volta
+function renderFocus(E){
+  const withLaps = E.filter(o => o.st);
+  const o = withLaps.at(-1);
+  const el = $('#focus');
+  if(!o){ el.innerHTML = '<p class="small">Importe o arquivo de tempo de voltas das corridas para ver os pontos a trabalhar.</p>'; return; }
+  const prev = E[E.indexOf(o) - 1];
+  const st = o.st, items = [], good = [];
+  const ks = ['s1','s2','s3'].filter(k => st.sec[k].loss != null);
+  if(ks.length){
+    const k = ks.reduce((a,b) => st.sec[b].loss > st.sec[a].loss ? b : a);
+    items.push({score: st.sec[k].loss, html:`<b>${k.toUpperCase()} é onde você mais perde:</b> +${st.sec[k].loss.toFixed(2)}s para o melhor da sessão nesse trecho. Trabalhe traçado e ponto de freada ali.`});
+  }
+  const ki = ['s1','s2','s3'].filter(k => st.sec[k].irr != null);
+  if(ki.length){
+    const k = ki.reduce((a,b) => st.sec[b].irr > st.sec[a].irr ? b : a);
+    if(st.sec[k].irr > 0.3) items.push({score: st.sec[k].irr, html:`<b>${k.toUpperCase()} é onde você é mais irregular:</b> em média +${st.sec[k].irr.toFixed(2)}s acima do seu melhor ali. Tente repetir a mesma linha e as mesmas referências toda volta.`});
+  }
+  if(st.ideal != null && st.best - st.ideal > 0.3)
+    items.push({score: st.best - st.ideal, html:`<b>Tempo ao alcance:</b> juntando os seus melhores setores você faria ${fmtTime(st.ideal)}, ${(st.best - st.ideal).toFixed(2)}s mais rápido que a sua melhor volta.`});
+  if(st.sd != null && st.sd > 1)
+    items.push({score: st.sd, html:`<b>Consistência:</b> suas voltas variaram ±${st.sd.toFixed(2)}s. Antes de buscar velocidade, foque em fazer voltas parecidas.`});
+  const fade = M.fade.get(o);
+  if(fade != null && fade > 0.3) items.push({score: fade, html:`<b>Queda no fim:</b> você ficou ${fade.toFixed(2)}s mais lento no último terço da prova (cansaço ou concentração).`});
+  else if(fade != null && fade < -0.3) good.push(`Terminou a prova mais forte: ${Math.abs(fade).toFixed(2)}s mais rápido no fim do que no meio.`);
+  const gain = M.gain.get(o);
+  if(gain != null && gain < 0) items.push({score: -gain * 0.4, html:`<b>Largada e disputas:</b> perdeu ${-gain} ${gain === -1 ? 'posição' : 'posições'} entre a largada e a chegada.`});
+  else if(gain > 0) good.push(`Ganhou ${gain} ${gain === 1 ? 'posição' : 'posições'} entre a largada e a chegada.`);
+  const g = spdVsGrid(o.x, o.r);
+  if(g != null && g <= -1) items.push({score: -g * 0.3, html:`<b>Kart:</b> estava ${(-g).toFixed(1)} km/h abaixo da média do grid na reta. Parte da diferença pode ter sido o kart (ou a saída da última curva).`});
+  if(prev){
+    for(const m of KPIS){
+      const v = m.get(o), pv = m.get(prev);
+      if(v == null || pv == null) continue;
+      const better = m.lower ? v < pv : v > pv;
+      if(better && Math.abs(v - pv) > (m.key === 'sd' ? 0.1 : 0.5)) good.push(`${m.short} melhorou: ${m.fmt(pv)} → ${m.fmt(v)}.`);
+    }
+  }
+  items.sort((a,b) => b.score - a.score);
+  el.innerHTML = `<p class="small" style="margin-top:0">Com base na corrida de ${raceLabel(o.r)}.</p>
+    ${items.length ? `<ol class="focus">${items.slice(0,4).map(i => `<li>${i.html}</li>`).join('')}</ol>` : '<p>Nenhum ponto crítico nessa corrida. 👏</p>'}
+    ${good.length ? `<h3>Pontos fortes${tip('strengths')}</h3><ul class="good">${good.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}`;
+}
+
+function renderLastRace(E){
+  const o = E.at(-1), el = $('#lastRace');
+  if(!o){ el.innerHTML = '<p class="small">Esse piloto ainda não tem provas importadas (só qualify).</p>'; return; }
+  const stat = (lbl, val, k) => `<div class="stat"><div class="lbl">${lbl}${tip(k)}</div><div class="val">${val}</div></div>`;
+  el.innerHTML = `<div class="panel-head"><span><b>${raceLabel(o.r)}</b> · Prova ${esc(o.r.session)} · circuito ${esc(o.r.track)}</span>
+      <button class="btn" data-goto="${esc(groupKey(o.r))}">Ver detalhes da corrida →</button></div>
+    <div class="stats">
+      ${stat('Posição', `${o.x.pos}º <span class="small">de ${fieldSize(o.r)}</span>`, 'thPos')}
+      ${o.q ? stat('Largada (qualify)', `${o.q.pos}º`, 'session') : ''}
+      ${stat('Melhor volta', fmtTime(o.x.best), 'best')}
+      ${KPIS.map(m => { const v = m.get(o); return v == null ? '' : stat(m.short, m.fmt(v), m.key); }).join('')}
+    </div>`;
+}
+
+/* ---------- aba Evolução ---------- */
+function renderChart(E){
+  const ms = $('#metric');
+  if(!ms.options.length) ms.innerHTML = [...new Set(METRICS.map(m => m.g))].map(g =>
+    `<optgroup label="${g}">${METRICS.filter(m => m.g === g).map(m => `<option value="${m.key}">${m.label}</option>`).join('')}</optgroup>`).join('');
+  const m = M[ms.value];
+  $('#metricHelp').textContent = HELP[m.key] || '';
+  const vals = E.map(o => m.get(o) ?? null);
+  const notes = [];
+  if(!vals.some(v => v != null)) notes.push('Ainda não há dados dessa métrica. Ela depende de importar o qualify ou o tempo de voltas.');
+  const pts = vals.map((v,i) => v==null ? null : [i,v]).filter(Boolean);
+  let trend = null;
+  if(pts.length >= 3){
+    const mx = mean(pts.map(p => p[0])), my = mean(pts.map(p => p[1]));
+    const b = pts.reduce((s,p) => s + (p[0]-mx)*(p[1]-my), 0) / pts.reduce((s,p) => s + (p[0]-mx)**2, 0);
+    trend = vals.map((_,i) => my + b*(i-mx));
+    const step = m.int ? Math.round(b) : +b.toFixed(3);
+    const better = m.lower ? step < 0 : step > 0;
+    notes.push(step === 0 ? 'Tendência: estável.' : `Tendência: ${better ? 'melhorando' : 'piorando'} (${m.diff(step)} por corrida, em média).`);
+  }
+  $('#chartNote').textContent = notes.join(' ');
+  if(!window.Chart){ $('#chartNote').textContent = 'Gráfico indisponível (sem internet para carregar o Chart.js).'; return; }
+  const cs = getComputedStyle(document.documentElement);
+  const muted = cs.getPropertyValue('--muted').trim(), grid = cs.getPropertyValue('--border').trim(), accent = cs.getPropertyValue('--accent').trim();
+  const datasets = [{label:m.label, data:vals, borderColor:accent, backgroundColor:accent, borderWidth:3, pointRadius:5, pointHoverRadius:7, spanGaps:true, tension:.2}];
+  if(trend) datasets.push({label:'Tendência', data:trend, borderColor:muted, borderDash:[6,4], borderWidth:1.5, pointRadius:0});
+  if(chart) chart.destroy();
+  chart = new Chart($('#chart'), {type:'line', data:{labels: E.map(o => raceLabel(o.r)), datasets}, options:{
+    responsive:true, maintainAspectRatio:false, interaction:{mode:'index', intersect:false},
+    scales:{
+      // gráfico sempre com "melhor" para cima
+      y:{reverse:!!m.lower, ticks:{color:muted, callback:v=>m.fmt(v), ...(m.int ? {stepSize:1, precision:0} : {})}, grid:{color:grid}},
+      x:{ticks:{color:muted}, grid:{color:grid}}
+    },
+    plugins:{legend:{display:!!trend, labels:{color:muted}},
+      tooltip:{callbacks:{label:c => c.raw==null || c.datasetIndex > 0 ? null : `${c.dataset.label}: ${m.fmt(c.raw)}`}}}
+  }});
+}
+
+function renderEvo(E){
+  let html = `<tr><th>Métrica</th><th class="r">Última${tip('colLast')}</th><th class="r">Média${tip('colAvg')}</th><th class="r">Melhor${tip('colBest')}</th>
+    <th class="r">Tendência${tip('colTrend')}</th><th>Histórico${tip('colHist')}</th></tr>`;
+  let group = '';
+  for(const m of METRICS.filter(m => !m.sector)){
+    const s = series(m, E);
+    if(!s.length) continue;
+    if(m.g !== group){ group = m.g; html += `<tr class="grp"><td colspan="6">${group}</td></tr>`; }
+    const vals = s.map(p => p.v), last = s.at(-1), prev = s.at(-2);
+    let avg = mean(vals); if(m.int) avg = Math.round(avg);
+    const best = s.reduce((b,p) => (m.lower ? p.v < b.v : p.v > b.v) ? p : b);
+    html += `<tr><td>${m.label}${tip(m.key)}</td>
+      <td class="r"><b>${m.fmt(last.v)}</b>${prev ? deltaHtml(m, last.v, prev.v) : ''}</td>
+      <td class="r">${m.fmt(avg)}</td>
+      <td class="r">${m.fmt(best.v)}<span class="d small">${raceLabel(best.o.r)}</span></td>
+      <td class="r">${trendHtml(m, vals)}</td><td>${sparkline(m, vals)}</td></tr>`;
+  }
+  $('#evo').innerHTML = html;
+
+  // setores: perda e irregularidade lado a lado
+  const rows = ['s1','s2','s3'].map(k => {
+    const L = series(M['loss'+k], E), I = series(M['irr'+k], E);
+    if(!L.length && !I.length) return '';
+    const cell = (m, s) => s.length ? `<td class="r"><b>${m.fmt(s.at(-1).v)}</b>${s.length > 1 ? deltaHtml(m, s.at(-1).v, s.at(-2).v) : ''}</td>
+      <td class="r">${m.fmt(mean(s.map(p => p.v)))}</td><td>${sparkline(m, s.map(p => p.v), 90, 24)}</td>` : '<td class="r muted">—</td><td></td><td></td>';
+    return `<tr><td><b>${k.toUpperCase()}</b></td>${cell(M['loss'+k], L)}${cell(M['irr'+k], I)}</tr>`;
+  }).join('');
+  $('#evoSectors').innerHTML = rows ? `<tr><th rowspan="2">Setor</th><th colspan="3" class="c">Perda para o melhor da sessão${tip('secLoss')}</th>
+      <th colspan="3" class="c">Irregularidade${tip('secIrr')}</th></tr>
+    <tr><th class="r">Última</th><th class="r">Média</th><th>Histórico</th><th class="r">Última</th><th class="r">Média</th><th>Histórico</th></tr>${rows}`
+    : '<tr><td class="small">Importe o arquivo de tempo de voltas para ver a evolução por setor.</td></tr>';
+}
+
+/* ---------- aba Corridas ---------- */
+function sessionRow(label, r, x){
+  if(!x) return `<tr><td>${label}</td><td colspan="12" class="small">Não participou.</td></tr>`;
+  const st = lapStats(x, r);
+  const s = k => x[k] ?? st?.[k];
+  return `<tr><td>${label}</td><td class="r"><b>${x.pos ?? '—'}º</b> <span class="small">de ${fieldSize(r)}</span></td><td class="r">${esc(x.no)}</td>
+    <td class="r">${x.laps || st?.n || '—'}</td><td class="r">${fmtTime(x.best)}</td><td class="r">${x.best!=null?'+'+pctOff(x,r).toFixed(1)+'%':'—'}</td>
+    <td class="r">${fmtTime(x.total)}</td><td class="r">${esc(x.diff)}</td><td class="r">${esc(x.gap)}</td>
+    <td class="r">${fmtTime(s('s1'))}</td><td class="r">${fmtTime(s('s2'))}</td><td class="r">${fmtTime(s('s3'))}</td>
+    <td class="r">${s('top')!=null ? s('top').toFixed(1) : '—'}</td></tr>`;
+}
+
+function kartLine(r, x, label){
+  const t = topOf(x, r), g = r.ref?.topAvg;
+  if(t == null) return '';
+  const d = g != null ? t - g : null;
+  const verdict = d == null ? '' : d >= 0.5 ? 'kart acima da média do grid' : d <= -0.5 ? 'kart abaixo da média do grid' : 'kart na média do grid';
+  return `<p class="note"><b>Kart nº ${esc(x.no)}</b>${tip('kartLine')} (${label}): ${t.toFixed(1)} km/h na reta${g != null ? ` · média do grid ${g.toFixed(1)} · mais rápido ${r.ref.topMax.toFixed(1)}
+    · <span class="${d>=0?'up':'down'}">${signed(d,1,' km/h')}</span>, ${verdict}` : ''}.</p>`;
+}
+
+function sectorTable(st){
+  const ks = ['s1','s2','s3'].filter(k => st.sec[k].best != null);
+  if(!ks.length) return '';
+  const worst = ks.filter(k => st.sec[k].loss != null).reduce((a,k) => a == null || st.sec[k].loss > st.sec[a].loss ? k : a, null);
+  const worstIrr = ks.filter(k => st.sec[k].irr != null).reduce((a,k) => a == null || st.sec[k].irr > st.sec[a].irr ? k : a, null);
+  return `<div class="scroll"><table>
+    <tr><th>Setor</th><th class="r">Seu melhor${tip('secBest')}</th><th class="r">Melhor da sessão${tip('secRef')}</th><th class="r">Perda (técnica)${tip('secLoss')}</th>
+        <th class="r">Sua média${tip('secAvg')}</th><th class="r">Irregularidade${tip('secIrr')}</th></tr>
+    ${ks.map(k => { const s = st.sec[k]; return `<tr><td><b>${k.toUpperCase()}</b></td><td class="r">${fmtTime(s.best)}</td><td class="r">${fmtTime(s.ref)}</td>
+      <td class="r ${k===worst?'worst':''}">${s.loss!=null ? plusSec(s.loss) : '—'}</td><td class="r">${fmtTime(s.avg)}</td>
+      <td class="r ${k===worstIrr?'worst':''}">${s.irr!=null ? plusSec(s.irr) : '—'}</td></tr>`; }).join('')}
+  </table></div>
+  <p class="note">${worst ? `Maior perda no <b>${worst.toUpperCase()}</b>` : ''}${worstIrr ? `${worst ? '; ' : ''}mais irregular no <b>${worstIrr.toUpperCase()}</b>` : ''}.
+    ${ks.length < 3 ? 'Nessa sessão o kartódromo não registrou todos os setores.' : ''}</p>`;
+}
+
+function rhythmBlock(st){
+  if(st.thirds[0] == null) return '';
+  const [a,b,c] = st.thirds, best = Math.min(a,b,c);
+  const RT = {'Início':'start', 'Meio':'mid', 'Fim':'end'};
+  const cell = (lbl, v) => `<div class="stat"><div class="lbl">${lbl}${tip(RT[lbl])}</div><div class="val ${v===best?'purple':''}">${fmtTime(v)}</div></div>`;
+  const fade = c - b;
+  return `<h3>Ritmo ao longo da prova${tip('rhythm')}</h3><div class="stats">
+    ${st.lap1 != null ? `<div class="stat"><div class="lbl">1ª volta (largada)${tip('lap1')}</div><div class="val">${fmtTime(st.lap1)}</div></div>` : ''}
+    ${cell('Início', a)}${cell('Meio', b)}${cell('Fim', c)}
+    <div class="stat"><div class="lbl">Queda no fim${tip('fade')}</div><div class="val ${fade<=0?'up':'down'}">${plusSec(fade)}</div></div>
+    <div class="stat"><div class="lbl">Erros${tip('errors')}</div><div class="val">${st.errors}</div></div>
+  </div>`;
+}
+
+const NOTE_FIELDS = [
+  {k:'kart',  label:'Kart (sensação)', opts:['bom','normal','ruim']},
+  {k:'pista', label:'Pista',           opts:['seca','úmida','molhada']},
+  {k:'clima', label:'Clima / temperatura', ph:'ex.: frio, 18°C'},
+  {k:'peso',  label:'Seu peso (kg)',   type:'number'},
+];
+let nameOf = k => k;
+function notesForm(r, k){
+  const n = r.notes?.[k] || {};
+  return `<p class="small" style="margin-top:0">Anotações de ${esc(nameOf(k))}${tip('notes')}</p>
+    <div class="notes" data-notes="${esc(r.id)}">
+      ${NOTE_FIELDS.map(f => `<label>${f.label}${f.opts
+        ? `<select data-n="${f.k}"><option value="">—</option>${f.opts.map(o => `<option ${n[f.k]===o?'selected':''}>${o}</option>`).join('')}</select>`
+        : `<input type="${f.type||'text'}" ${f.type==='number'?'step="0.1"':''} data-n="${f.k}" value="${esc(n[f.k]??'')}" placeholder="${esc(f.ph||'')}">`}</label>`).join('')}
+      <label class="full">Observações<textarea data-n="obs" placeholder="ex.: errei a freada da curva 3; kart puxando para a direita">${esc(n.obs||'')}</textarea></label>
+    </div>`;
+}
+
+function lapSection(r, x, label){
+  const st = lapStats(x, r);
+  if(!st) return '';
+  const STAT_TIP = {'Melhor volta':'best', 'Média das voltas':'avg', 'Consistência':'sd', 'Volta ideal':'ideal', 'Voltas válidas':'valid'};
+  const stat = (lbl, val) => `<div class="stat"><div class="lbl">${lbl}${tip(STAT_TIP[lbl])}</div><div class="val">${val}</div></div>`;
+  const best = k => { const v = x.lapTimes.map(l => l[k]).filter(v => v != null); return v.length ? Math.min(...v) : null; };
+  const bs1 = best('s1'), bs2 = best('s2'), bs3 = best('s3');
+  const rows = x.lapTimes.map(l => {
+    const slow = l.time != null && l.time > st.best * SLOW_LAP;
+    const obs = l.pit ? 'box' : slow ? 'lenta (fora da média)' : '';
+    const cls = (v,b) => v != null && v === b ? 'r purple' : 'r';
+    return `<tr><td class="r">${l.lap}</td><td class="${l.time===st.best?'r purple':slow||l.pit?'r muted':'r'}">${fmtTime(l.time)}</td>
+      <td class="r small">${l.time!=null && l.time!==st.best ? '+'+(l.time-st.best).toFixed(3) : ''}</td>
+      <td class="${cls(l.s1,bs1)}">${fmtTime(l.s1)}</td><td class="${cls(l.s2,bs2)}">${fmtTime(l.s2)}</td><td class="${cls(l.s3,bs3)}">${fmtTime(l.s3)}</td>
+      <td class="r">${l.sf!=null ? l.sf.toFixed(1) : '—'}</td><td class="r small">${l.leaderLap ?? ''}</td><td class="small">${obs}</td></tr>`;
+  }).join('');
+  return `<h3>${label}${tip('lapByLap')}</h3>
+    <div class="stats">
+      ${stat('Melhor volta', `${fmtTime(st.best)} <span class="small">(volta ${st.bestLap})</span>`)}
+      ${stat('Média das voltas', fmtTime(st.avg))}
+      ${stat('Consistência', st.sd!=null ? '±'+st.sd.toFixed(2)+'s' : '—')}
+      ${stat('Volta ideal', st.ideal!=null ? `${fmtTime(st.ideal)} <span class="small">(−${(st.best-st.ideal).toFixed(3)})</span>` : '—')}
+      ${stat('Voltas válidas', `${st.clean} de ${st.n}`)}
+    </div>
+    <div class="lapchart"><canvas data-lapchart="${esc(r.id)}"></canvas></div>
+    ${label === 'Prova' ? rhythmBlock(st) : ''}
+    <details class="laptable"><summary>Ver todas as voltas</summary><div class="scroll"><table>
+      <tr><th class="r">Volta</th><th class="r">Tempo</th><th class="r">Δ melhor${tip('lapDelta')}</th><th class="r">S1${tip('thSectors')}</th><th class="r">S2</th><th class="r">S3</th>
+          <th class="r">Vel. (km/h)${tip('lapSpeed')}</th><th class="r">Volta do líder${tip('leaderLap')}</th><th></th></tr>${rows}
+    </table></div></details>`;
+}
+
+function drawLapChart(canvas){
+  if(!window.Chart || !canvas || !canvas.offsetParent) return;   // só desenha se estiver visível
+  const r = state.races.find(r => r.id === canvas.dataset.lapchart);
+  const x = r?.results.find(x => keyOf(x) === state.view);
+  const st = lapStats(x, r);
+  if(!st) return;
+  lapCharts.get(canvas)?.destroy();
+  const cs = getComputedStyle(document.documentElement);
+  const muted = cs.getPropertyValue('--muted').trim(), grid = cs.getPropertyValue('--border').trim();
+  const accent = cs.getPropertyValue('--accent').trim(), purple = cs.getPropertyValue('--purple').trim();
+  const L = x.lapTimes;
+  const colors = L.map(l => l.time === st.best ? purple : (l.pit || l.time > st.best*SLOW_LAP) ? muted : accent);
+  lapCharts.set(canvas, new Chart(canvas, {type:'line', data:{labels: L.map(l => l.lap), datasets:[
+      {label:'Tempo da volta', data:L.map(l => l.time), borderColor:accent, pointBackgroundColor:colors, pointBorderColor:colors, pointRadius:4, borderWidth:2, tension:.15},
+      ...(st.avg ? [{label:'Média', data:L.map(() => st.avg), borderColor:muted, borderDash:[6,4], borderWidth:1.5, pointRadius:0}] : [])
+    ]}, options:{
+      responsive:true, maintainAspectRatio:false, interaction:{mode:'index', intersect:false},
+      scales:{
+        y:{min:Math.floor(st.best - 0.5), max:Math.ceil(st.best*SLOW_LAP), ticks:{color:muted, callback:v=>fmtTime(v)}, grid:{color:grid}},
+        x:{title:{display:true, text:'Volta', color:muted}, ticks:{color:muted}, grid:{color:grid}}
+      },
+      plugins:{legend:{labels:{color:muted}}, tooltip:{callbacks:{label:c => `${c.dataset.label}: ${fmtTime(c.raw)}`}}}
+  }}));
+}
+
+const raceTab = new Map();   // aba interna aberta em cada corrida
+function raceGroups(){
+  const groups = new Map();
+  for(const r of sortedRaces()){
+    const g = groups.get(groupKey(r)) || {key:groupKey(r)};
+    g[kindOf(r)] = r; groups.set(g.key, g);
+  }
+  return [...groups.values()].reverse();
+}
+
+function renderRaces(){
+  for(const c of lapCharts.values()) c.destroy();
+  lapCharts.clear();
+  const open = new Set([...document.querySelectorAll('details.race[open]')].map(d => d.dataset.group));
+  if(state.openGroup){ open.add(state.openGroup); }
+  const k = state.view;
+  $('#races').innerHTML = raceGroups().map(g => {
+    const main = g.prova || g.tomada;
+    const x = g.prova?.results.find(x => keyOf(x) === k), q = g.tomada?.results.find(x => keyOf(x) === k);
+    const stx = x && lapStats(x, g.prova), stq = q && lapStats(q, g.tomada);
+    const hasNotes = Object.values(main.notes?.[k] || {}).some(v => v != null && v !== '');
+    const tabs = [['resumo','Resumo'], ...(stx || stq ? [['voltas','Volta a volta'], ['setores','Setores']] : []), ...(x || q ? [['notas','Anotações']] : [])];
+    const cur = tabs.some(t => t[0] === raceTab.get(g.key)) ? raceTab.get(g.key) : 'resumo';
+    const pane = (id, html) => `<div class="pane" data-pane="${id}" ${id===cur?'':'hidden'}>${html}</div>`;
+    return `<details class="race" data-group="${esc(g.key)}" ${open.has(g.key)?'open':''}>
+      <summary><b>${raceLabel(main)}</b><span>${g.prova ? 'Prova' : 'Qualify'} ${esc(main.session)}</span>
+        ${x ? `<span class="tag on">${x.pos}º de ${fieldSize(g.prova)}</span>` : `<span class="tag">não correu a prova</span>`}
+        ${x?.best != null ? `<span class="tag">${pctFmt(pctOff(x, g.prova))} da mais rápida</span>` : ''}
+        ${stx?.sd != null ? `<span class="tag">±${stx.sd.toFixed(2)}s</span>` : ''}
+        ${hasNotes ? '<span class="tag">📝</span>' : ''}</summary>
+      <div class="race-body">
+        <div class="subtabs">${tabs.map(([id,lbl]) => `<button type="button" class="subtab ${id===cur?'on':''}" data-rtab="${id}">${lbl}</button>`).join('')}</div>
+        ${pane('resumo', `
+          <div class="scroll"><table>
+            <tr><th>Sessão${tip('session')}</th><th class="r">Pos${tip('thPos')}</th><th class="r">Kart${tip('thKart')}</th><th class="r">Voltas${tip('thLaps')}</th>
+                <th class="r">Melhor volta${tip('best')}</th><th class="r">% da + rápida${tip('thPct')}</th><th class="r">Tempo total${tip('thTotal')}</th>
+                <th class="r">Diff${tip('thDiff')}</th><th class="r">Espaço${tip('thGap')}</th>
+                <th class="r">S1${tip('thSectors')}</th><th class="r">S2</th><th class="r">S3</th><th class="r">Vel. máx.${tip('thTop')}</th></tr>
+            ${g.tomada ? sessionRow('Qualify', g.tomada, q) : ''}
+            ${g.prova ? sessionRow('Prova', g.prova, x) : ''}
+          </table></div>
+          ${q ? kartLine(g.tomada, q, 'qualify') : ''}${x ? kartLine(g.prova, x, 'prova') : ''}
+          <p class="note">🏆 Vencedor: ${esc(main.winnerName||'—')} · ⏱ volta mais rápida: ${fmtTime(fastest(main))} (${esc(main.fastestName||'')}) · ${fieldSize(main)} pilotos · ${esc(main.venue)}</p>
+          ${g.prova && !x?.lapTimes ? '<p class="note">Importe o arquivo "tempo de voltas" dessa prova para ver o volta a volta e os setores.</p>' : ''}
+          <div class="race-tools">
+            <label>Data: <input type="date" value="${main.date}" data-gdate="${esc(g.key)}"></label>
+            <label>Circuito: <input type="text" size="5" value="${esc(main.track)}" data-gtrack="${esc(g.key)}"></label>
+            ${g.prova ? `<button class="btn danger" data-del="${esc(g.prova.id)}">Remover prova</button>` : ''}
+            ${g.tomada ? `<button class="btn danger" data-del="${esc(g.tomada.id)}">Remover qualify</button>` : ''}
+          </div>`)}
+        ${tabs.some(t => t[0]==='voltas') ? pane('voltas', (x ? lapSection(g.prova, x, 'Prova') : '') + (q ? lapSection(g.tomada, q, 'Qualify') : '')) : ''}
+        ${tabs.some(t => t[0]==='setores') ? pane('setores', `<p class="small" style="margin-top:0">Onde está o tempo${tip('sectors')}</p>
+          ${stx ? `<h3>Prova</h3>${sectorTable(stx)}` : ''}${stq ? `<h3>Qualify</h3>${sectorTable(stq)}` : ''}`) : ''}
+        ${tabs.some(t => t[0]==='notas') ? pane('notas', notesForm(main, k)) : ''}
+      </div></details>`;
+  }).join('');
+  document.querySelectorAll('details.race[open] canvas[data-lapchart]').forEach(drawLapChart);
+  if(state.openGroup){
+    const d = [...document.querySelectorAll('details.race')].find(d => d.dataset.group === state.openGroup);
+    state.openGroup = null;
+    d?.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+
+/* ---------- render geral ---------- */
+const TABS = ['resumo','evolucao','corridas'];
+function render(){
+  const has = state.races.length > 0;
+  $('#empty').hidden = has;
+  $('#dashboard').hidden = !has;
+  if(!has) return;
+  const drivers = driverIndex();
+  nameOf = k => drivers.get(k)?.name || k;
+  renderPicker(drivers);
+  const E = entriesFor(state.view);
+  $('#driverInfo').textContent = `${E.length} prova(s) · ${E.filter(o => o.q).length} com qualify · ${E.filter(o => o.st).length} com volta a volta`;
+  const tab = TABS.includes(state.tab) ? state.tab : 'resumo';
+  document.querySelectorAll('.tabs [data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+  document.querySelectorAll('[data-view]').forEach(v => v.hidden = v.dataset.view !== tab);
+  if(tab === 'resumo'){ renderKpis(E); renderFocus(E); renderLastRace(E); }
+  if(tab === 'evolucao'){ renderChart(E); renderEvo(E); }
+  if(tab === 'corridas') renderRaces();
+}
+
+/* ---------- eventos ---------- */
+$('#fileInput').addEventListener('change', e => { importFiles([...e.target.files]); e.target.value=''; });
+$('#driver').addEventListener('change', e => { state.view = e.target.value; save(); render(); });
+$('#metric').addEventListener('change', render);
+document.querySelector('.tabs').addEventListener('click', e => {
+  const b = e.target.closest('[data-tab]');
+  if(b){ state.tab = b.dataset.tab; save(); render(); }
+});
+// "ver detalhes da corrida" no Resumo
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-goto]');
+  if(b){ state.tab = 'corridas'; state.openGroup = b.dataset.goto; save(); render(); }
+});
+
+// gráfico do volta a volta só é desenhado quando a corrida e a aba estão abertas
+$('#races').addEventListener('toggle', e => {
+  if(e.target.matches('details.race') && e.target.open) e.target.querySelectorAll('canvas[data-lapchart]').forEach(drawLapChart);
+}, true);
+
+$('#races').addEventListener('click', e => {
+  const t = e.target.closest('[data-rtab]');
+  if(t){
+    const d = t.closest('details.race');
+    raceTab.set(d.dataset.group, t.dataset.rtab);
+    d.querySelectorAll('[data-rtab]').forEach(b => b.classList.toggle('on', b === t));
+    d.querySelectorAll('[data-pane]').forEach(p => p.hidden = p.dataset.pane !== t.dataset.rtab);
+    d.querySelectorAll(`[data-pane="${t.dataset.rtab}"] canvas[data-lapchart]`).forEach(drawLapChart);
+    return;
+  }
+  const del = e.target.closest('[data-del]');
+  if(del && confirm('Remover esta sessão?')){
+    const id = del.dataset.del;
+    dbDelete(id).then(() => { state.races = state.races.filter(r => r.id !== id); save(); render(); }).catch(dbFail);
+  }
+});
+// data e circuito valem para a prova e o qualify do mesmo evento; anotações salvam sem redesenhar
+$('#races').addEventListener('change', e => {
+  const t = e.target;
+  if(t.dataset.n){
+    const r = state.races.find(r => r.id === t.closest('[data-notes]').dataset.notes);
+    if(!r) return;
+    r.notes = r.notes || {};
+    const n = r.notes[state.view] = r.notes[state.view] || {};
+    n[t.dataset.n] = t.type === 'number' ? (t.value === '' ? null : +t.value) : t.value.trim();
+    dbPut(r).then(() => toast('Anotação salva')).catch(dbFail);
+    save();
+    return;
+  }
+  const key = t.dataset.gtrack || t.dataset.gdate, v = t.value.trim();
+  if(!key || !v) return;
+  for(const r of state.races.filter(r => groupKey(r) === key)){
+    if(t.dataset.gtrack) r.track = v; else r.date = v;
+    dbPut(r).catch(dbFail);
+  }
+  save(); render();
+});
+
+$('#exportBtn').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(state, null, 1)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = `kart-backup-${toISO(new Date())}.json`; a.click();
+  URL.revokeObjectURL(a.href);
+});
+$('#backupInput').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if(!f) return;
+  try{
+    const s = JSON.parse(await f.text());
+    if(!Array.isArray(s.races)) throw new Error();
+    let n = 0;
+    for(const r of s.races) if(!state.races.some(x => x.id===r.id)){ prepSession(r); await dbPut(r); state.races.push(r); n++; }
+    applyTracking(); render(); toast(`${n} sessão(ões) restaurada(s)`);
+  }catch(err){ toast('Arquivo de backup inválido.'); }
+});
+
+document.addEventListener('dragover', e => { e.preventDefault(); document.body.classList.add('dragging'); });
+document.addEventListener('dragleave', e => { if(!e.relatedTarget) document.body.classList.remove('dragging'); });
+document.addEventListener('drop', e => {
+  e.preventDefault(); document.body.classList.remove('dragging');
+  if(readOnly) return;
+  const files = [...e.dataTransfer.files].filter(f => /\.html?$/i.test(f.name));
+  if(files.length) importFiles(files);
+});
+
+const tipBox = Object.assign(document.createElement('div'), {id:'tipbox', hidden:true, role:'tooltip'});
+document.body.appendChild(tipBox);
+let tipFor = null;
+const canHover = matchMedia('(hover: hover)').matches;
+function showTip(btn){
+  tipBox.textContent = HELP[btn.dataset.tip] || '';
+  tipBox.hidden = false;
+  const r = btn.getBoundingClientRect(), w = tipBox.offsetWidth, h = tipBox.offsetHeight;
+  let top = r.bottom + 8;
+  if(top + h > innerHeight - 8) top = Math.max(8, r.top - h - 8);
+  tipBox.style.left = Math.min(Math.max(8, r.left + r.width/2 - w/2), innerWidth - w - 8) + 'px';
+  tipBox.style.top = top + 'px';
+  tipFor = btn;
+}
+function hideTip(){ tipBox.hidden = true; tipFor = null; }
+document.addEventListener('click', e => {
+  const b = e.target.closest('.tip');
+  if(b){ e.preventDefault(); e.stopPropagation(); (tipFor === b && !canHover) ? hideTip() : showTip(b); return; }
+  if(!e.target.closest('#tipbox')) hideTip();
+}, true);
+document.addEventListener('mouseover', e => { const b = e.target.closest('.tip'); if(b && canHover) showTip(b); });
+document.addEventListener('mouseout', e => { const b = e.target.closest('.tip'); if(b && canHover && !b.contains(e.relatedTarget)) hideTip(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') hideTip(); });
+addEventListener('scroll', hideTip, true);
+addEventListener('resize', hideTip);
+
+connectDb().then(() => { applyTracking(); render(); });
+</script>
+</body>
+</html>
