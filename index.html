@@ -4,15 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Meus Resultados de Kart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{
-  --bg:#f4f5f7; --panel:#fff; --text:#1c1f24; --muted:#6b7280; --border:#e3e5e8;
-  --accent:#c8102e; --accent-soft:#fde8eb; --good:#15803d; --bad:#b91c1c; --purple:#7c3aed;
-}
-@media (prefers-color-scheme: dark){
-  :root{ --bg:#111317; --panel:#1a1d23; --text:#e8eaed; --muted:#9aa0a8; --border:#2c3038;
-    --accent:#ff4d5e; --accent-soft:#3a1d22; --good:#4ade80; --bad:#f87171; --purple:#a78bfa; }
+  --bg:#15171b; --panel:#1f2228; --panel2:#272b32; --text:#f3efe8; --muted:#a3a7ae; --border:#343943;
+  --accent:#e10b17; --accent-soft:#3a1b1e; --yellow:#ffcc1f; --good:#47d77c; --bad:#ff5a5f; --purple:#b69cff;
+  --decal:#fdfbf7; --decal-ink:#1b1b1b;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -103,15 +102,121 @@ ul.good{margin:0;padding-left:20px;color:var(--good)}
 details.laptable{margin-top:10px}
 details.laptable summary{cursor:pointer;color:var(--accent);font-size:13px}
 th.c{text-align:center}
+/* ===== tema: pista de corrida à noite, carro vermelho com raio amarelo ===== */
+body{font-family:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background-color:var(--bg);
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px),radial-gradient(rgba(0,0,0,.35) 1px,transparent 1px);
+  background-size:7px 7px,11px 11px;background-position:0 0,3px 5px}
+header{position:relative;overflow:hidden;border:0;padding:20px 24px 26px;color:#fff;
+  background:radial-gradient(120% 140% at 20% 0%,#ff4b3e 0%,var(--accent) 38%,#9c0610 75%,#5e0007 100%);
+  box-shadow:inset 0 -2px 0 rgba(255,255,255,.15),0 6px 18px rgba(0,0,0,.45)}
+header::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.28) 0,rgba(255,255,255,0) 45%)}
+header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;
+  background:repeating-linear-gradient(90deg,var(--yellow) 0 34px,transparent 34px 58px)}
+.brand{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+.brand svg{width:46px;height:46px;flex:none;filter:drop-shadow(2px 3px 0 rgba(80,0,0,.6))}
+h1{margin:0;font-family:"Bungee","Barlow",sans-serif;font-weight:400;font-size:26px;line-height:1.05;letter-spacing:.5px;color:#fff;
+  text-shadow:0 2px 0 #6e0008}
+h1 small{display:block;font-family:"Barlow",sans-serif;font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--yellow);text-shadow:none}
+.db{font-family:"Barlow",sans-serif;font-size:11px;background:rgba(0,0,0,.28);margin-left:0;margin-top:6px;display:inline-block}
+.db.ok{color:#c8ffda;border-color:rgba(160,255,200,.6)}
+.db.warn{color:#ffe1e1;border-color:#ffb3b3}
+.actions{position:relative;z-index:1}
+.btn{border-radius:8px;font-weight:600;background:var(--panel2);border-color:var(--border);color:var(--text)}
+.btn:hover{border-color:var(--yellow)}
+.btn.primary{background:var(--yellow);border-color:var(--yellow);color:#2a1600;box-shadow:0 3px 0 #b88900}
+header .btn:not(.primary){background:rgba(0,0,0,.25);border-color:rgba(255,255,255,.45);color:#fff}
+main{padding-top:20px}
+h2,h3{font-family:"Bungee","Barlow",sans-serif;font-weight:400;letter-spacing:.4px}
+h2{font-size:16px;color:var(--yellow)}
+h3{font-size:13px;color:var(--text)}
+.panel,.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 22px rgba(0,0,0,.35)}
+.panel{border-left:4px solid var(--accent)}
+.toolbar{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:10px 14px}
+.picker{font-family:"Bungee","Barlow",sans-serif;font-weight:400;font-size:13px;color:var(--yellow)}
+select,input[type=date],input[type=text]{background:var(--panel2);color:var(--text);border-color:var(--border)}
+.picker select{font-family:"Barlow",sans-serif;font-weight:600;font-size:14px}
+/* números principais como adesivo de número de corrida */
+.card.kpi{background:var(--decal);color:var(--decal-ink);border:0;border-radius:14px;padding:14px 16px;position:relative;
+  box-shadow:inset 0 0 0 4px var(--accent),inset 0 0 0 7px var(--decal),inset 0 0 0 8px rgba(0,0,0,.12),0 8px 20px rgba(0,0,0,.45)}
+.card.kpi .lbl{color:#5a5a5a;font-weight:700;text-transform:uppercase;letter-spacing:1px;font-size:11px}
+.card.kpi .val{font-family:"Bungee","Barlow",sans-serif;font-weight:400;font-size:30px;color:var(--accent)}
+.card.kpi .val.muted{color:#b5b5b5}
+.card.kpi .sub{color:#6b6b6b}
+.card.kpi .tip{border-color:#888;color:#666}
+.stat{background:var(--panel2);border:1px solid var(--border)}
+.stat .val{font-family:"Bungee","Barlow",sans-serif;font-weight:400;font-size:15px;letter-spacing:.3px}
+.racehead{font-size:15px}
+.racehead b{font-family:"Bungee","Barlow",sans-serif;font-weight:400;color:var(--yellow)}
+ol.focus li::marker{color:var(--yellow);font-family:"Bungee",sans-serif}
+ul.good{color:var(--good)}
+.subtab{background:var(--panel2);border-color:var(--border);color:var(--muted);border-radius:8px;font-weight:600}
+.subtab.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 2px 0 #7a0009}
+th{color:var(--muted)}
+td.worst{background:var(--accent-soft);color:#ff8a8f;font-weight:700}
+.tip{border-color:var(--muted);color:var(--muted)}
+.dropzone{background:var(--panel);border:3px dashed var(--yellow);color:var(--text)}
+details.laptable summary{color:var(--yellow)}
+/* faixa da estrada no fim da página */
+main::after{content:"";display:block;height:6px;margin-top:28px;border-radius:3px;
+  background:repeating-linear-gradient(90deg,var(--yellow) 0 34px,transparent 34px 58px)}
+.sm{display:none}
+/* ===== celular ===== */
+@media (max-width:640px){
+  header{padding:14px 14px 20px;gap:10px}
+  .brand svg{width:34px;height:34px}
+  h1{font-size:19px}
+  h1 small{font-size:10px;letter-spacing:1.5px}
+  .actions{width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .actions .btn{padding:8px 6px;font-size:13px;text-align:center}
+  .lg{display:none}
+  .sm{display:inline}
+  table.stack td.empty{display:none}
+  main{padding:12px 10px}
+  #content,.view{gap:12px}
+  .panel{padding:12px;border-radius:10px}
+  h2{font-size:14px}
+  .toolbar{flex-direction:column;align-items:stretch;gap:8px;padding:10px 12px}
+  .picker{flex-direction:column;align-items:stretch;gap:4px}
+  .picker select{width:100%;padding:9px 10px;font-size:15px}
+  .racehead{font-size:13px}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .stat{padding:7px 9px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .card.kpi{padding:11px 12px}
+  .card.kpi .val{font-size:22px}
+  .card.kpi .lbl{font-size:10px;letter-spacing:.5px}
+  .card.kpi .sub{font-size:11px;line-height:1.3}
+  ol.focus{padding-left:18px;gap:10px}
+  .subtabs{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+  .subtab{flex:none;padding:7px 12px}
+  .lapchart{height:200px}
+  /* tabelas "stack": cada linha vira um cartão com rótulo e valor */
+  table.stack, table.stack tbody{display:block}
+  table.stack tr:first-child{display:none}
+  table.stack tr{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px;padding:10px 0;border-bottom:1px solid var(--border)}
+  table.stack td{display:flex;justify-content:space-between;gap:6px;border:0;padding:3px 0;white-space:normal;font-size:13px}
+  table.stack td::before{content:attr(data-label);color:var(--muted);font-size:12px}
+  table.stack td.rowhead{grid-column:1/-1;font-family:"Bungee","Barlow",sans-serif;color:var(--yellow);font-size:14px}
+  table.stack td.rowhead::before{content:none}
+  table.stack td.worst{background:none}
+  .race-tools{flex-direction:column;align-items:stretch}
+  .race-tools label{display:flex;justify-content:space-between;align-items:center}
+  .notes{grid-template-columns:1fr 1fr}
+  #tipbox{max-width:calc(100vw - 24px)}
+}
 </style>
 </head>
 <body>
 <header>
-  <h1>🏁 Meus Resultados de Kart <span id="dbStatus" class="db"></span></h1>
+  <div class="brand">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M38 2 10 36h17l-6 26 33-38H36z" fill="#ffcc1f" stroke="#7a0009" stroke-width="3" stroke-linejoin="round"/></svg>
+    <h1>Meus Resultados de Kart<small>Análise corrida a corrida</small><span id="dbStatus" class="db"></span></h1>
+  </div>
   <div class="actions">
-    <label class="btn primary">Importar arquivos<input type="file" id="fileInput" accept=".html,.htm" multiple hidden></label>
-    <button class="btn" id="exportBtn">Exportar backup</button>
-    <label class="btn">Restaurar backup<input type="file" id="backupInput" accept=".json" hidden></label>
+    <label class="btn primary">Importar<span class="lg"> arquivos</span><input type="file" id="fileInput" accept=".html,.htm" multiple hidden></label>
+    <button class="btn" id="exportBtn"><span class="lg">Exportar backup</span><span class="sm">Backup</span></button>
+    <label class="btn">Restaurar<span class="lg"> backup</span><input type="file" id="backupInput" accept=".json" hidden></label>
   </div>
 </header>
 
@@ -125,7 +230,7 @@ th.c{text-align:center}
     <div id="dashboard" class="view" hidden>
       <div class="toolbar">
         <label class="picker">Piloto: <select id="driver"></select></label>
-        <label class="picker">Corrida <button type="button" class="tip" data-tip="race" aria-label="O que é isso?">?</button>: <select id="race"></select></label>
+        <label class="picker"><span>Corrida: <button type="button" class="tip" data-tip="race" aria-label="O que é isso?">?</button></span><select id="race"></select></label>
       </div>
 
       <div class="panel">
@@ -500,7 +605,9 @@ function driverIndex(){
 function lapStats(x, r){
   const L = (x?.lapTimes || []).filter(l => l.time != null);
   if(!L.length) return null;
-  const best = Math.min(...L.map(l => l.time));
+  // voltas marcadas em azul (box ou volta final incompleta) não contam como melhor volta
+  const timed = L.filter(l => !l.pit);
+  const best = Math.min(...(timed.length ? timed : L).map(l => l.time));
   const clean = L.filter(l => !l.pit && l.time <= best * SLOW_LAP);
   const minOf = k => { const v = L.map(l => l[k]).filter(v => v != null); return v.length ? Math.min(...v) : null; };
   const sec = {};
@@ -704,11 +811,12 @@ function sessionRow(label, r, x){
   if(!x) return `<tr><td>${label}</td><td colspan="12" class="small">Não participou.</td></tr>`;
   const st = lapStats(x, r);
   const s = k => x[k] ?? st?.[k];
-  return `<tr><td>${label}</td><td class="r"><b>${x.pos ?? '—'}º</b> <span class="small">de ${fieldSize(r)}</span></td><td class="r">${esc(x.no)}</td>
-    <td class="r">${x.laps || st?.n || '—'}</td><td class="r">${fmtTime(x.best)}</td><td class="r">${x.best!=null?'+'+pctOff(x,r).toFixed(1)+'%':'—'}</td>
-    <td class="r">${fmtTime(x.total)}</td><td class="r">${esc(x.diff)}</td><td class="r">${esc(x.gap)}</td>
-    <td class="r">${fmtTime(s('s1'))}</td><td class="r">${fmtTime(s('s2'))}</td><td class="r">${fmtTime(s('s3'))}</td>
-    <td class="r">${s('top')!=null ? s('top').toFixed(1) : '—'}</td></tr>`;
+  const c = (lbl, v) => `<td class="r${v === '—' ? ' empty' : ''}" data-label="${lbl}"><span>${v}</span></td>`;
+  return `<tr><td class="rowhead">${label}</td>${c('Posição', `<b>${x.pos ?? '—'}º</b> <span class="small">de ${fieldSize(r)}</span>`)}${c('Kart', esc(x.no))}
+    ${c('Voltas', x.laps || st?.n || '—')}${c('Melhor volta', fmtTime(x.best))}${c('% da + rápida', x.best!=null?'+'+pctOff(x,r).toFixed(1)+'%':'—')}
+    ${c('Tempo total', fmtTime(x.total))}${c('Diff', esc(x.diff) || '—')}${c('Espaço', esc(x.gap) || '—')}
+    ${c('S1', fmtTime(s('s1')))}${c('S2', fmtTime(s('s2')))}${c('S3', fmtTime(s('s3')))}
+    ${c('Vel. máx.', s('top')!=null ? s('top').toFixed(1) : '—')}</tr>`;
 }
 
 function kartLine(r, x, label){
@@ -725,12 +833,13 @@ function sectorTable(st){
   if(!ks.length) return '';
   const worst = ks.filter(k => st.sec[k].loss != null).reduce((a,k) => a == null || st.sec[k].loss > st.sec[a].loss ? k : a, null);
   const worstIrr = ks.filter(k => st.sec[k].irr != null).reduce((a,k) => a == null || st.sec[k].irr > st.sec[a].irr ? k : a, null);
-  return `<div class="scroll"><table>
+  return `<div class="scroll"><table class="stack">
     <tr><th>Setor</th><th class="r">Seu melhor${tip('secBest')}</th><th class="r">Melhor da sessão${tip('secRef')}</th><th class="r">Perda (técnica)${tip('secLoss')}</th>
         <th class="r">Sua média${tip('secAvg')}</th><th class="r">Irregularidade${tip('secIrr')}</th></tr>
-    ${ks.map(k => { const s = st.sec[k]; return `<tr><td><b>${k.toUpperCase()}</b></td><td class="r">${fmtTime(s.best)}</td><td class="r">${fmtTime(s.ref)}</td>
-      <td class="r ${k===worst?'worst':''}">${s.loss!=null ? plusSec(s.loss) : '—'}</td><td class="r">${fmtTime(s.avg)}</td>
-      <td class="r ${k===worstIrr?'worst':''}">${s.irr!=null ? plusSec(s.irr) : '—'}</td></tr>`; }).join('')}
+    ${ks.map(k => { const s = st.sec[k]; return `<tr><td class="rowhead"><b>${k.toUpperCase()}</b></td><td class="r" data-label="Seu melhor">${fmtTime(s.best)}</td>
+      <td class="r" data-label="Melhor da sessão">${fmtTime(s.ref)}</td>
+      <td class="r ${k===worst?'worst':''}" data-label="Perda (técnica)">${s.loss!=null ? plusSec(s.loss) : '—'}</td><td class="r" data-label="Sua média">${fmtTime(s.avg)}</td>
+      <td class="r ${k===worstIrr?'worst':''}" data-label="Irregularidade">${s.irr!=null ? plusSec(s.irr) : '—'}</td></tr>`; }).join('')}
   </table></div>
   <p class="note">${worst ? `Maior perda no <b>${worst.toUpperCase()}</b>` : ''}${worstIrr ? `${worst ? '; ' : ''}mais irregular no <b>${worstIrr.toUpperCase()}</b>` : ''}.
     ${ks.length < 3 ? 'Nessa sessão o kartódromo não registrou todos os setores.' : ''}</p>`;
@@ -777,7 +886,7 @@ function lapSection(r, x, label){
   const bs1 = best('s1'), bs2 = best('s2'), bs3 = best('s3');
   const rows = x.lapTimes.map(l => {
     const slow = l.time != null && l.time > st.best * SLOW_LAP;
-    const obs = l.pit ? 'box' : slow ? 'lenta (fora da média)' : '';
+    const obs = l.pit ? 'box / volta incompleta' : slow ? 'lenta (fora da média)' : '';
     const cls = (v,b) => v != null && v === b ? 'r purple' : 'r';
     return `<tr><td class="r">${l.lap}</td><td class="${l.time===st.best?'r purple':slow||l.pit?'r muted':'r'}">${fmtTime(l.time)}</td>
       <td class="r small">${l.time!=null && l.time!==st.best ? '+'+(l.time-st.best).toFixed(3) : ''}</td>
@@ -839,7 +948,7 @@ function renderDetail(g){
   $('#detail').innerHTML = `
     <div class="subtabs">${tabs.map(([id,lbl]) => `<button type="button" class="subtab ${id===detailTab?'on':''}" data-rtab="${id}">${lbl}</button>`).join('')}</div>
     ${pane('sessoes', `
-      <div class="scroll"><table>
+      <div class="scroll"><table class="stack">
         <tr><th>Sessão${tip('session')}</th><th class="r">Pos${tip('thPos')}</th><th class="r">Kart${tip('thKart')}</th><th class="r">Voltas${tip('thLaps')}</th>
             <th class="r">Melhor volta${tip('best')}</th><th class="r">% da + rápida${tip('thPct')}</th><th class="r">Tempo total${tip('thTotal')}</th>
             <th class="r">Diff${tip('thDiff')}</th><th class="r">Espaço${tip('thGap')}</th>
