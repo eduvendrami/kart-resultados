@@ -3,15 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Meus Resultados de Kart</title>
+<title>Campeonato de Kart da Família</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#15171b; --panel:#1f2228; --panel2:#272b32; --text:#f3efe8; --muted:#a3a7ae; --border:#343943;
-  --accent:#e10b17; --accent-soft:#3a1b1e; --yellow:#ffcc1f; --good:#47d77c; --bad:#ff5a5f; --purple:#b69cff;
-  --decal:#fdfbf7; --decal-ink:#1b1b1b;
+  --bg:#f3f5f8; --panel:#ffffff; --panel2:#f1f4f8; --text:#0f1724; --muted:#5d6878; --border:#dfe5ec;
+  --accent:#1f6feb; --accent-ink:#ffffff; --accent-soft:#e7f0fe; --good:#16803c; --bad:#c62828; --bad-soft:#fdecec; --purple:#7c3aed;
+  --shadow:0 1px 2px rgba(15,23,36,.06),0 4px 14px rgba(15,23,36,.05);
+  --font-head:"Space Grotesk","Inter",system-ui,sans-serif; --font-num:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0b1016; --panel:#131a22; --panel2:#19222c; --text:#e6edf5; --muted:#8a96a6; --border:#253140;
+    --accent:#4c9aff; --accent-ink:#06121f; --accent-soft:#132840; --good:#4ade80; --bad:#ff6b6b; --bad-soft:#3a1a1d; --purple:#b49cff;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.25); }
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -102,71 +107,78 @@ ul.good{margin:0;padding-left:20px;color:var(--good)}
 details.laptable{margin-top:10px}
 details.laptable summary{cursor:pointer;color:var(--accent);font-size:13px}
 th.c{text-align:center}
-/* ===== tema: pista de corrida à noite, carro vermelho com raio amarelo ===== */
-body{font-family:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background-color:var(--bg);
-  background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px),radial-gradient(rgba(0,0,0,.35) 1px,transparent 1px);
-  background-size:7px 7px,11px 11px;background-position:0 0,3px 5px}
-header{position:relative;overflow:hidden;border:0;padding:20px 24px 26px;color:#fff;
-  background:radial-gradient(120% 140% at 20% 0%,#ff4b3e 0%,var(--accent) 38%,#9c0610 75%,#5e0007 100%);
-  box-shadow:inset 0 -2px 0 rgba(255,255,255,.15),0 6px 18px rgba(0,0,0,.45)}
-header::before{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(180deg,rgba(255,255,255,.28) 0,rgba(255,255,255,0) 45%)}
-header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;
-  background:repeating-linear-gradient(90deg,var(--yellow) 0 34px,transparent 34px 58px)}
-.brand{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
-.brand svg{width:46px;height:46px;flex:none;filter:drop-shadow(2px 3px 0 rgba(80,0,0,.6))}
-h1{margin:0;font-family:"Bungee","Barlow",sans-serif;font-weight:400;font-size:26px;line-height:1.05;letter-spacing:.5px;color:#fff;
-  text-shadow:0 2px 0 #6e0008}
-h1 small{display:block;font-family:"Barlow",sans-serif;font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--yellow);text-shadow:none}
-.db{font-family:"Barlow",sans-serif;font-size:11px;background:rgba(0,0,0,.28);margin-left:0;margin-top:6px;display:inline-block}
-.db.ok{color:#c8ffda;border-color:rgba(160,255,200,.6)}
-.db.warn{color:#ffe1e1;border-color:#ffb3b3}
-.actions{position:relative;z-index:1}
-.btn{border-radius:8px;font-weight:600;background:var(--panel2);border-color:var(--border);color:var(--text)}
-.btn:hover{border-color:var(--yellow)}
-.btn.primary{background:var(--yellow);border-color:var(--yellow);color:#2a1600;box-shadow:0 3px 0 #b88900}
-header .btn:not(.primary){background:rgba(0,0,0,.25);border-color:rgba(255,255,255,.45);color:#fff}
-main{padding-top:20px}
-h2,h3{font-family:"Bungee","Barlow",sans-serif;font-weight:400;letter-spacing:.4px}
-h2{font-size:16px;color:var(--yellow)}
-h3{font-size:13px;color:var(--text)}
-.panel,.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 22px rgba(0,0,0,.35)}
-.panel{border-left:4px solid var(--accent)}
-.toolbar{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:10px 14px}
-.picker{font-family:"Bungee","Barlow",sans-serif;font-weight:400;font-size:13px;color:var(--yellow)}
-select,input[type=date],input[type=text]{background:var(--panel2);color:var(--text);border-color:var(--border)}
-.picker select{font-family:"Barlow",sans-serif;font-weight:600;font-size:14px}
-/* números principais como adesivo de número de corrida */
-.card.kpi{background:var(--decal);color:var(--decal-ink);border:0;border-radius:14px;padding:14px 16px;position:relative;
-  box-shadow:inset 0 0 0 4px var(--accent),inset 0 0 0 7px var(--decal),inset 0 0 0 8px rgba(0,0,0,.12),0 8px 20px rgba(0,0,0,.45)}
-.card.kpi .lbl{color:#5a5a5a;font-weight:700;text-transform:uppercase;letter-spacing:1px;font-size:11px}
-.card.kpi .val{font-family:"Bungee","Barlow",sans-serif;font-weight:400;font-size:30px;color:var(--accent)}
-.card.kpi .val.muted{color:#b5b5b5}
-.card.kpi .sub{color:#6b6b6b}
-.card.kpi .tip{border-color:#888;color:#666}
+/* ===== tema: painel de telemetria ===== */
+body{font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg)}
+header{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 24px;box-shadow:var(--shadow)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand svg{width:40px;height:40px;flex:none}
+h1{margin:0;font-family:var(--font-head);font-weight:700;font-size:20px;letter-spacing:-.2px;line-height:1.15;color:var(--text)}
+h1 small{display:block;font-family:"Inter",sans-serif;font-size:12px;font-weight:500;color:var(--muted);letter-spacing:0;text-transform:none}
+.db{font-size:11px;margin:5px 0 0;display:inline-block;font-weight:500}
+.btn{border-radius:8px;font-weight:600;background:var(--panel);border:1px solid var(--border);color:var(--text)}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.06);color:var(--accent-ink)}
+main{padding-top:18px}
+h2,h3{font-family:var(--font-head);font-weight:600;letter-spacing:-.1px}
+h2{font-size:16px;color:var(--text)}
+h3{font-size:14px;color:var(--text)}
+.panel,.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow)}
+.toolbar{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:10px 14px;box-shadow:var(--shadow)}
+.picker{font-size:13px;font-weight:600;color:var(--muted)}
+select,input[type=date],input[type=text],input[type=number]{background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:8px}
+.picker select{font-weight:600;font-size:14px;color:var(--text)}
+select:focus,input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+/* números principais */
+.card.kpi{position:relative;padding:14px 16px 14px 18px;overflow:hidden}
+.card.kpi::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:4px;border-radius:0 4px 4px 0;background:var(--accent)}
+.card.kpi .lbl{color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.6px;font-size:11px}
+.card.kpi .val{font-family:var(--font-num);font-weight:700;font-size:28px;letter-spacing:-.5px;color:var(--text);margin-top:2px}
+.card.kpi .val.muted{color:var(--muted)}
 .stat{background:var(--panel2);border:1px solid var(--border)}
-.stat .val{font-family:"Bungee","Barlow",sans-serif;font-weight:400;font-size:15px;letter-spacing:.3px}
+.stat .val,.racehead b,td.r{font-family:var(--font-num)}
+.stat .val{font-weight:700;font-size:15px}
+td.r{font-size:13px}
 .racehead{font-size:15px}
-.racehead b{font-family:"Bungee","Barlow",sans-serif;font-weight:400;color:var(--yellow)}
-ol.focus li::marker{color:var(--yellow);font-family:"Bungee",sans-serif}
+.racehead b{font-weight:700;color:var(--accent)}
+#champName{font-family:var(--font-head);font-size:16px}
+ol.focus li::marker{color:var(--accent);font-weight:700}
 ul.good{color:var(--good)}
-.subtab{background:var(--panel2);border-color:var(--border);color:var(--muted);border-radius:8px;font-weight:600}
-.subtab.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 2px 0 #7a0009}
+.subtab{background:var(--panel2);border:1px solid var(--border);color:var(--muted);border-radius:8px;font-weight:600}
+.subtab.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 th{color:var(--muted)}
-td.worst{background:var(--accent-soft);color:#ff8a8f;font-weight:700}
+td.worst{background:var(--bad-soft);color:var(--bad);font-weight:700}
 .tip{border-color:var(--muted);color:var(--muted)}
-.dropzone{background:var(--panel);border:3px dashed var(--yellow);color:var(--text)}
-details.laptable summary{color:var(--yellow)}
-/* faixa da estrada no fim da página */
-main::after{content:"";display:block;height:6px;margin-top:28px;border-radius:3px;
-  background:repeating-linear-gradient(90deg,var(--yellow) 0 34px,transparent 34px 58px)}
+.dropzone{background:var(--panel);border:2px dashed var(--accent);color:var(--text)}
+details.laptable summary{color:var(--accent)}
 .sm{display:none}
+#champ table.stack td.rowhead,#driverPage table.stack td.rowhead{display:none}
+.mainnav{display:flex;gap:6px;margin:0 0 14px;flex-wrap:wrap}
+.mainnav{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px}
+.mainnav button{flex:1;min-width:140px;border:0;background:none;color:var(--muted);border-radius:9px;padding:9px 14px;
+  font-family:var(--font-head);font-weight:600;font-size:14px;cursor:pointer}
+.mainnav button.on{background:var(--panel);color:var(--text);box-shadow:var(--shadow)}
+tr.leader td{background:var(--accent-soft)}
+.linkbtn{background:none;border:0;padding:0;font:inherit;font-weight:700;color:var(--accent);cursor:pointer;text-align:left}
+.linkbtn:hover{text-decoration:underline}
+.backbtn{align-self:flex-start;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:7px 12px;font:inherit;font-weight:600;cursor:pointer}
+.backbtn:hover{border-color:var(--accent);color:var(--accent)}
+.driverhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.driverhead .bar{width:6px;align-self:stretch;border-radius:3px;background:var(--border)}
+.driverhead h2{margin:0;font-size:22px}
+.teamlogo{margin-left:auto;height:110px;width:200px;object-fit:contain;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px}
+.team{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.team i{width:4px;height:14px;border-radius:2px;background:var(--border);display:inline-block}
+.medal{font-size:15px}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.rules ol{margin:0;padding-left:20px}
+.ptsgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:6px}
 /* ===== celular ===== */
 @media (max-width:640px){
-  header{padding:14px 14px 20px;gap:10px}
+  header{padding:12px 14px;gap:10px}
   .brand svg{width:34px;height:34px}
-  h1{font-size:19px}
-  h1 small{font-size:10px;letter-spacing:1.5px}
+  h1{font-size:18px}
+  h1 small{font-size:11px}
   .actions{width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
   .actions .btn{padding:8px 6px;font-size:13px;text-align:center}
   .lg{display:none}
@@ -184,7 +196,7 @@ main::after{content:"";display:block;height:6px;margin-top:28px;border-radius:3p
   .stat{padding:7px 9px}
   .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   .card.kpi{padding:11px 12px}
-  .card.kpi .val{font-size:22px}
+  .card.kpi .val{font-size:21px}
   .card.kpi .lbl{font-size:10px;letter-spacing:.5px}
   .card.kpi .sub{font-size:11px;line-height:1.3}
   ol.focus{padding-left:18px;gap:10px}
@@ -197,81 +209,74 @@ main::after{content:"";display:block;height:6px;margin-top:28px;border-radius:3p
   table.stack tr{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px;padding:10px 0;border-bottom:1px solid var(--border)}
   table.stack td{display:flex;justify-content:space-between;gap:6px;border:0;padding:3px 0;white-space:normal;font-size:13px}
   table.stack td::before{content:attr(data-label);color:var(--muted);font-size:12px}
-  table.stack td.rowhead{grid-column:1/-1;font-family:"Bungee","Barlow",sans-serif;color:var(--yellow);font-size:14px}
+  #champ table.stack td.rowhead,#driverPage table.stack td.rowhead{display:flex;justify-content:flex-start;gap:8px}
+  table.stack td.hide-sm{display:none!important}
+  table.stack td.rowhead{grid-column:1/-1;font-family:var(--font-head);font-weight:600;color:var(--text);font-size:15px}
   table.stack td.rowhead::before{content:none}
   table.stack td.worst{background:none}
   .race-tools{flex-direction:column;align-items:stretch}
   .race-tools label{display:flex;justify-content:space-between;align-items:center}
   .notes{grid-template-columns:1fr 1fr}
+  .mainnav button{min-width:0;font-size:12px;padding:9px 8px}
   #tipbox{max-width:calc(100vw - 24px)}
+  .teamlogo{height:76px;width:120px}
 }
 </style>
 </head>
 <body>
 <header>
   <div class="brand">
-    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M38 2 10 36h17l-6 26 33-38H36z" fill="#ffcc1f" stroke="#7a0009" stroke-width="3" stroke-linejoin="round"/></svg>
-    <h1>Meus Resultados de Kart<small>Análise corrida a corrida</small><span id="dbStatus" class="db"></span></h1>
-  </div>
-  <div class="actions">
-    <label class="btn primary">Importar<span class="lg"> arquivos</span><input type="file" id="fileInput" accept=".html,.htm" multiple hidden></label>
-    <button class="btn" id="exportBtn"><span class="lg">Exportar backup</span><span class="sm">Backup</span></button>
-    <label class="btn">Restaurar<span class="lg"> backup</span><input type="file" id="backupInput" accept=".json" hidden></label>
+    <svg viewBox="0 0 40 40" aria-hidden="true">
+      <rect width="40" height="40" rx="10" fill="var(--accent)"/>
+      <path d="M12 9v23" stroke="var(--accent-ink)" stroke-width="2.4" stroke-linecap="round"/>
+      <g fill="var(--accent-ink)"><rect x="13.5" y="10" width="5" height="5"/><rect x="23.5" y="10" width="5" height="5"/>
+        <rect x="18.5" y="15" width="5" height="5"/><rect x="28.5" y="15" width="0" height="5"/><rect x="13.5" y="20" width="5" height="5"/><rect x="23.5" y="20" width="5" height="5"/></g>
+      <path d="M13.5 10h15v15h-15z" fill="none" stroke="var(--accent-ink)" stroke-width="1.4"/>
+    </svg>
+    <h1>Campeonato de Kart da Família<small>Classificação no estilo Fórmula 1</small></h1>
   </div>
 </header>
 
 <main>
   <section id="content">
+    <div id="driverPage" class="view" hidden></div>
+    <div id="champ" class="view" hidden>
+      <div class="panel">
+        <p class="racehead" style="margin:0"><b id="champName">Campeonato</b> <span class="small" id="champInfo"></span></p>
+      </div>
+      <div id="champCards" class="kpis"></div>
+      <div class="panel">
+        <h2>Classificação geral <button type="button" class="tip" data-tip="champTable" aria-label="O que é isso?">?</button></h2>
+        <div class="scroll"><table class="stack" id="champTable"></table></div>
+      </div>
+      <div id="champStages"></div>
+      <div class="panel">
+        <h2>Regulamento</h2>
+        <div id="champRules"></div>
+      </div>
+    </div>
+
     <div id="empty" class="dropzone">
-      Arraste para cá os arquivos do kartódromo (.html): <b>resultados da prova</b>, <b>qualify (tomada de tempo)</b> e <b>tempo de voltas</b>.<br>
-      Ou clique em <b>Importar arquivos</b>.
+      Nenhuma etapa registrada ainda.
     </div>
 
-    <div id="dashboard" class="view" hidden>
-      <div class="toolbar">
-        <label class="picker">Piloto: <select id="driver"></select></label>
-        <label class="picker"><span>Corrida: <button type="button" class="tip" data-tip="race" aria-label="O que é isso?">?</button></span><select id="race"></select></label>
-      </div>
-
-      <div class="panel">
-        <p class="racehead" id="raceHead" style="margin:0 0 10px"></p>
-        <div class="stats" id="raceLine"></div>
-      </div>
-
-      <div id="kpis" class="kpis"></div>
-
-      <div class="panel">
-        <h2>Foco para a próxima corrida <button type="button" class="tip" data-tip="focus" aria-label="O que é isso?">?</button></h2>
-        <div id="focus"></div>
-      </div>
-
-      <div class="panel">
-        <h2>Detalhes da corrida</h2>
-        <div id="detail"></div>
-      </div>
-    </div>
   </section>
 </main>
 <div id="toast"></div>
 
 <script>
 const STORE_KEY = 'kart-resultados-v1';
-// Pilotos principais: aparecem primeiro no seletor (código entre colchetes no arquivo do kartódromo).
-// Todos os outros pilotos também são importados e aparecem depois, em ordem alfabética.
+// Pilotos principais (código entre colchetes no arquivo do kartódromo). Só eles são guardados na importação.
 const TRACKED = [
   {code:'240461', name:'EDUARDO VENDRAMI'},
   {code:'245424', name:'ISAAC LUCENA'},
   {code:'245426', name:'RENATA FARIAS'},
   {code:'245421', name:'REBECA RODRIGUES'},
   {code:'214706', name:'VINICIUS ROSA ALVES'},
-  {code:'210649', name:'THIAGO BARROS'},
-  {code:'245465', name:'JAIRO LUCENA MARTINS'},
 ];
 const SLOW_LAP = 1.2;   // voltas acima de 120% da melhor não entram na média/consistência
 
 let state = load();
-let chart = null;
-const lapCharts = new Map();
 let dbOnline = false;   // true quando o site foi aberto pelo server.py (banco kart.db)
 let readOnly = false;   // true na versão publicada (GitHub Pages), que lê data.json
 
@@ -281,7 +286,7 @@ let readOnly = false;   // true na versão publicada (GitHub Pages), que lê dat
 function load(){
   try{
     const s = JSON.parse(localStorage.getItem(STORE_KEY));
-    if(s && Array.isArray(s.races)) return {races:s.races, view:s.view||null, race:s.race||null};
+    if(s && Array.isArray(s.races)) return {races:s.races, view:s.view||null, race:s.race||null, page:s.page||'analise'};
   }catch(e){}
   return {races:[], view:null, race:null};
 }
@@ -319,15 +324,9 @@ async function connectDb(){
         state.races = data.races;
         readOnly = true;
         document.body.classList.add('readonly');
-        var updated = data.generated ? new Date(data.generated).toLocaleDateString('pt-BR') : '';
       }
     }catch(e){}
   }
-  const st = $('#dbStatus');
-  st.textContent = dbOnline ? '💾 Salvo no banco (kart.db)'
-                 : readOnly ? `🌐 Versão online · somente leitura${updated ? ' · atualizada em ' + updated : ''}`
-                 : '⚠ Sem banco: abra pelo "Abrir Kart.bat" para salvar';
-  st.className = 'db ' + (dbOnline || readOnly ? 'ok' : 'warn');
 }
 
 /* ---------- utilitários ---------- */
@@ -386,8 +385,10 @@ function prepSession(race){
   }
   race.kind = kindOf(race);
   race.session = sessionOf(race);
+  race.results = race.results.filter(isTracked);
   return race;
 }
+const isTracked = x => TRACKED.some(t => x.code ? x.code === t.code : norm(x.name).startsWith(norm(t.name)));
 
 // números de referência do grid inteiro: melhores setores e velocidade
 function sessionRef(results){
@@ -531,6 +532,7 @@ async function attachLaps(lp){
   return n;
 }
 
+// usada pelo Claude para importar arquivos; o site não tem mais botão de importar
 async function importFiles(files){
   const docs = [];
   const errors = [];
@@ -637,440 +639,188 @@ function lapStats(x, r){
 const topOf = (x, r) => x?.top ?? lapStats(x, r)?.top ?? null;
 const spdVsGrid = (x, r) => { const t = topOf(x, r), g = r?.ref?.topAvg; return t != null && g != null ? t - g : null; };
 
-// provas do piloto em ordem, com a tomada do mesmo evento e as estatísticas de voltas
-function entriesFor(k){
-  const tomadas = state.races.filter(r => kindOf(r) === 'tomada');
-  return sortedRaces().filter(r => kindOf(r) === 'prova').map(r => {
-    const x = r.results.find(x => keyOf(x) === k);
-    if(!x) return null;
-    const t = tomadas.find(t => groupKey(t) === groupKey(r));
-    return {r, x, t, q: t?.results.find(y => keyOf(y) === k) || null, st: lapStats(x, r)};
-  }).filter(Boolean);
-}
-
 /* ---------- explicações (botão "?") ---------- */
-const SECTOR_LOSS = 'Seu melhor tempo neste setor menos o melhor tempo de qualquer piloto da sessão no mesmo setor. Mostra onde falta técnica: traçado, ponto de freada, saída de curva. Quanto menor, melhor.';
-const SECTOR_IRR = 'Sua média neste setor menos o seu melhor neste setor. Mostra onde você não consegue repetir o que já fez, ou seja, onde mais erra. Quanto menor, mais constante.';
 const HELP = {
-  // os 4 números principais da corrida
-  pct: 'Velocidade: quanto a sua melhor volta ficou acima da volta mais rápida da prova (de qualquer piloto). 0% = você fez a mais rápida. Quanto menor, melhor.',
-  pace: 'Ritmo de corrida: quanto a MÉDIA das suas voltas ficou acima da volta mais rápida da prova. Corrida se ganha com a média, não com uma volta isolada. Quanto menor, melhor. Precisa do arquivo de tempo de voltas.',
-  sd: 'Consistência: o quanto as suas voltas variaram entre si (desvio padrão). ±0,5s = muito constante; ±2s = voltas bem diferentes umas das outras. Precisa do arquivo de tempo de voltas.',
-  rel: 'Resultado: quantos % dos outros pilotos terminaram atrás de você. 100% = venceu; 0% = chegou em último. Ex.: 17º de 24 = 30%. Quanto maior, melhor.',
-  gain: 'Posição de largada (qualify) menos posição de chegada. Positivo = você ganhou posições durante a prova; negativo = perdeu.',
-  // blocos
-  race: 'Escolha a corrida para ver a análise dela. Cada corrida é analisada sozinha, sem comparação com as outras.',
-  focus: 'Pontos para trabalhar, calculados a partir desta corrida, do que mais custou tempo para o que menos custou.',
-  strengths: 'O que funcionou bem nesta corrida.',
-  // tabela da sessão
-  session: 'Qualify (tomada de tempo) = voltas cronometradas antes da prova, que definem a ordem de largada. Prova = a corrida em si.',
-  thPos: 'Posição final na sessão e quantos pilotos participaram.',
-  thKart: 'Número do kart usado. Em kart de aluguel cada kart tem desempenho um pouco diferente.',
-  thLaps: 'Voltas completadas na sessão.',
-  best: 'Sua volta mais rápida na sessão.',
-  thPct: 'Quanto a sua melhor volta ficou acima da volta mais rápida da sessão. Quanto menor, melhor.',
-  thTotal: 'Tempo total que você ficou na pista na sessão.',
-  thDiff: 'Diferença para o 1º colocado, em tempo ou em voltas.',
-  thGap: 'Diferença para o piloto logo à sua frente.',
-  thSectors: 'S1, S2 e S3 são os três trechos em que a pista é dividida para cronometragem. Aqui aparecem os seus melhores tempos em cada um.',
-  thTop: 'Velocidade máxima na reta de chegada, em km/h.',
-  // volta a volta
-  avg: 'Média das suas voltas válidas (sem box e sem voltas com erro). É o seu ritmo real de corrida.',
-  ideal: 'Soma dos seus melhores S1, S2 e S3, mesmo que tenham sido em voltas diferentes. É a volta que você provou que consegue fazer; a diferença para a sua melhor volta é tempo ao seu alcance.',
-  lapByLap: 'Todas as suas voltas da sessão, com o tempo de cada setor. Em roxo: melhor volta e melhores setores; em cinza: voltas de box ou com erro.',
-  valid: 'Voltas usadas na média, na consistência, nos setores e no ritmo: exclui voltas de box e voltas mais de 20% mais lentas que a melhor.',
-  lapDelta: 'Quanto essa volta ficou acima da sua melhor volta.',
-  lapSpeed: 'Velocidade na reta de chegada nessa volta.',
-  leaderLap: 'Em que volta o líder estava quando você completou essa volta. Se o número do líder passar à frente do seu, você levou volta.',
-  sectors: 'A pista é dividida em três trechos (S1, S2 e S3). Comparar cada trecho mostra em que parte da pista você perde tempo, o que a melhor volta sozinha não mostra.',
-  secBest: 'O seu melhor tempo neste setor na sessão.',
-  secRef: 'O melhor tempo de qualquer piloto da sessão neste setor.',
-  secLoss: SECTOR_LOSS,
-  secAvg: 'A sua média neste setor nas voltas válidas.',
-  secIrr: SECTOR_IRR,
-  rhythm: 'Como o seu ritmo mudou ao longo da prova: largada, início, meio e fim. Mostra se você demora a entrar no ritmo ou se cai no final.',
-  start: 'Média das suas voltas válidas no primeiro terço da prova (sem a 1ª volta). Início lento costuma ser pneu frio ou tráfego da largada.',
-  mid: 'Média das suas voltas válidas no terço do meio da prova.',
-  end: 'Média das suas voltas válidas no último terço da prova. Fim lento costuma ser cansaço, pneu gasto ou perda de concentração.',
-  fade: 'Queda no fim: ritmo do último terço menos o do terço do meio. Positivo = ficou mais lento no final; negativo = terminou mais forte.',
-  lap1: 'Tempo da primeira volta, que inclui a largada.',
-  errors: 'Voltas mais de 20% mais lentas que a sua melhor, sem contar box: rodadas, saídas de pista, toques ou tráfego pesado. Ficam fora da média e da consistência.',
-  kartLine: 'Compara a velocidade máxima do seu kart na reta com a média de todos os pilotos da sessão. Acima da média = kart bom (ou boa saída da última curva); abaixo = kart mais fraco.',
-  notes: 'Anote o que os arquivos não registram: sensação do kart, pista, clima, peso e observações. Ajuda a entender o resultado da corrida.',
+  champTable: 'Classificação dos pilotos com a pontuação da Fórmula 1: 25, 18, 15, 12, 10, 8, 6, 4, 2 e 1 ponto do 1º ao 10º, pela ordem de chegada entre os pilotos do campeonato em cada etapa. Empate: quem tem mais vitórias, depois mais 2º lugares, e assim por diante.',
+  champPosGeral: 'Posição do piloto na corrida completa do kartódromo, com todos os participantes (não só os do campeonato).',
+  champLeader: 'Quem tem mais pontos no campeonato e a vantagem para o 2º colocado.',
 };
 const tip = k => HELP[k] ? `<button type="button" class="tip" data-tip="${k}" aria-label="O que é isso?">?</button>` : '';
-
-/* ---------- números da corrida ---------- */
-const signed = (d, dec=0, unit='') => `${d>0?'+':'−'}${Math.abs(d).toFixed(dec)}${unit}`;
-const plusSec = v => (v<0?'−':'+')+Math.abs(v).toFixed(3)+'s';
-const pctFmt = v => '+'+v.toFixed(1)+'%';
-const KPIS = [
-  {key:'pct',  short:'Velocidade',      sub:'melhor volta vs a mais rápida da prova', get:o=>pctOff(o.x,o.r), fmt:pctFmt},
-  {key:'pace', short:'Ritmo de corrida', sub:'média das voltas vs a mais rápida da prova',
-   get:o=>o.st?.avg!=null ? (o.st.avg/fastest(o.r) - 1)*100 : null, fmt:pctFmt},
-  {key:'sd',   short:'Consistência',    sub:'quanto suas voltas variaram', get:o=>o.st?.sd, fmt:v=>'±'+v.toFixed(2)+'s'},
-  {key:'rel',  short:'Resultado',       sub:'% do grid que chegou atrás de você', get:o=>relPos(o.x,o.r), fmt:v=>Math.round(v)+'%'},
-];
-const gainOf = o => o.q && o.x?.pos ? o.q.pos - o.x.pos : null;
-const fadeOf = st => st?.thirds[2]!=null && st?.thirds[1]!=null ? st.thirds[2]-st.thirds[1] : null;
-
-/* ---------- seletores ---------- */
-// principais primeiro, depois todos os outros; os dois grupos em ordem alfabética
-function renderPicker(drivers){
-  const byName = (a,b) => drivers.get(a).name.localeCompare(drivers.get(b).name, 'pt-BR');
-  const mainKeys = TRACKED.map(t => 'c'+t.code).filter(k => drivers.has(k)).sort(byName);
-  const others = [...drivers.keys()].filter(k => !mainKeys.includes(k)).sort(byName);
-  if(!drivers.has(state.view)) state.view = mainKeys[0] || others[0] || null;
-  const opts = keys => keys.map(k => `<option value="${esc(k)}">${esc(drivers.get(k).name)}</option>`).join('');
-  $('#driver').innerHTML = (mainKeys.length ? `<optgroup label="Principais">${opts(mainKeys)}</optgroup>` : '')
-                         + (others.length ? `<optgroup label="Outros pilotos (${others.length})">${opts(others)}</optgroup>` : '');
-  $('#driver').value = state.view;
-}
-
-// noites de corrida (prova + qualify do mesmo horário), da mais recente para a mais antiga
-function raceGroups(){
-  const groups = new Map();
-  for(const r of sortedRaces()){
-    const g = groups.get(groupKey(r)) || {key:groupKey(r)};
-    g[kindOf(r)] = r; groups.set(g.key, g);
-  }
-  return [...groups.values()].reverse();
-}
-function groupsFor(k){
-  return raceGroups().filter(g => g.prova?.results.some(x => keyOf(x) === k) || g.tomada?.results.some(x => keyOf(x) === k));
-}
-function renderRacePicker(groups){
-  if(!groups.some(g => g.key === state.race)) state.race = groups[0]?.key || null;
-  const k = state.view;
-  $('#race').innerHTML = groups.map(g => {
-    const main = g.prova || g.tomada, x = g.prova?.results.find(x => keyOf(x) === k);
-    return `<option value="${esc(g.key)}">${raceLabel(main)} · ${g.prova ? 'Prova' : 'Qualify'} ${esc(main.session)}${x ? ` · ${x.pos}º de ${fieldSize(g.prova)}` : ' · só qualify'}</option>`;
-  }).join('');
-  $('#race').value = state.race;
-}
-
-/* ---------- análise da corrida ---------- */
-function renderKpis(o){
-  $('#kpis').innerHTML = KPIS.map(m => {
-    const v = o ? m.get(o) : null;
-    return `<div class="card kpi"><div class="lbl">${m.short}${tip(m.key)}</div>
-      <div class="val ${v==null?'muted':''}">${v==null ? '—' : m.fmt(v)}</div>
-      <div class="sub">${v==null && o && ['pace','sd'].includes(m.key) ? 'precisa do arquivo de tempo de voltas' : m.sub}</div></div>`;
-  }).join('');
-}
-
-// pontos a trabalhar e pontos fortes, só com os dados desta corrida
-function renderFocus(o){
-  const el = $('#focus');
-  if(!o){ el.innerHTML = '<p class="small">Esse piloto só correu o qualify nessa noite.</p>'; return; }
-  const st = o.st, items = [], good = [];
-  if(st){
-    const ks = ['s1','s2','s3'].filter(k => st.sec[k].loss != null);
-    if(ks.length){
-      const k = ks.reduce((a,b) => st.sec[b].loss > st.sec[a].loss ? b : a);
-      items.push({score: st.sec[k].loss, html:`<b>${k.toUpperCase()} é onde você mais perdeu:</b> +${st.sec[k].loss.toFixed(2)}s para o melhor da sessão nesse trecho. Trabalhe traçado e ponto de freada ali.`});
-      if(ks.length > 1){
-        const b = ks.reduce((a,c) => st.sec[c].loss < st.sec[a].loss ? c : a);
-        good.push(`${b.toUpperCase()} foi o seu melhor setor: +${st.sec[b].loss.toFixed(2)}s para o melhor da sessão.`);
-      }
-    }
-    const ki = ['s1','s2','s3'].filter(k => st.sec[k].irr != null);
-    if(ki.length){
-      const k = ki.reduce((a,b) => st.sec[b].irr > st.sec[a].irr ? b : a);
-      if(st.sec[k].irr > 0.3) items.push({score: st.sec[k].irr, html:`<b>${k.toUpperCase()} é onde você foi mais irregular:</b> em média +${st.sec[k].irr.toFixed(2)}s acima do seu melhor ali. Tente repetir a mesma linha e as mesmas referências toda volta.`});
-    }
-    if(st.ideal != null){
-      const gap = st.best - st.ideal;
-      if(gap > 0.3) items.push({score: gap, html:`<b>Tempo ao alcance:</b> juntando os seus melhores setores você faria ${fmtTime(st.ideal)}, ${gap.toFixed(2)}s mais rápido que a sua melhor volta.`});
-      else good.push(`Melhor volta muito perto da sua volta ideal (${gap.toFixed(2)}s): você juntou bem os setores.`);
-    }
-    if(st.sd != null){
-      if(st.sd > 1) items.push({score: st.sd, html:`<b>Consistência:</b> suas voltas variaram ±${st.sd.toFixed(2)}s. Antes de buscar velocidade, foque em fazer voltas parecidas.`});
-      else if(st.sd <= 0.8) good.push(`Voltas constantes: variação de só ±${st.sd.toFixed(2)}s.`);
-    }
-    const fade = fadeOf(st);
-    if(fade != null && fade > 0.3) items.push({score: fade, html:`<b>Queda no fim:</b> você ficou ${fade.toFixed(2)}s mais lento no último terço da prova (cansaço ou concentração).`});
-    else if(fade != null && fade < -0.3) good.push(`Terminou a prova mais forte: ${Math.abs(fade).toFixed(2)}s mais rápido no fim do que no meio.`);
-    if(st.errors) items.push({score: st.errors * 0.5, html:`<b>Erros:</b> ${st.errors} ${st.errors === 1 ? 'volta bem mais lenta' : 'voltas bem mais lentas'} que a sua melhor (rodada, saída de pista ou tráfego).`});
-    else good.push('Nenhuma volta com erro.');
-  }
-  const gain = gainOf(o);
-  if(gain != null && gain < 0) items.push({score: -gain * 0.4, html:`<b>Largada e disputas:</b> perdeu ${-gain} ${gain === -1 ? 'posição' : 'posições'} entre a largada e a chegada.`});
-  else if(gain > 0) good.push(`Ganhou ${gain} ${gain === 1 ? 'posição' : 'posições'} entre a largada e a chegada.`);
-  const g = spdVsGrid(o.x, o.r);
-  if(g != null && g <= -1) items.push({score: -g * 0.3, html:`<b>Kart:</b> estava ${(-g).toFixed(1)} km/h abaixo da média do grid na reta. Parte da diferença pode ter sido o kart (ou a saída da última curva).`});
-  const rel = relPos(o.x, o.r);
-  if(rel != null && rel >= 50) good.push(`Terminou na metade da frente do grid (à frente de ${Math.round(rel)}%).`);
-  items.sort((a,b) => b.score - a.score);
-  el.innerHTML = `${!st ? '<p class="small" style="margin-top:0">Importe o arquivo de tempo de voltas dessa prova para uma análise completa (setores, consistência e ritmo).</p>' : ''}
-    ${items.length ? `<ol class="focus">${items.slice(0,4).map(i => `<li>${i.html}</li>`).join('')}</ol>` : st ? '<p>Nenhum ponto crítico nessa corrida. 👏</p>' : ''}
-    ${good.length ? `<h3>Pontos fortes${tip('strengths')}</h3><ul class="good">${good.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}`;
-}
-
-function sessionRow(label, r, x){
-  if(!x) return `<tr><td>${label}</td><td colspan="12" class="small">Não participou.</td></tr>`;
-  const st = lapStats(x, r);
-  const s = k => x[k] ?? st?.[k];
-  const c = (lbl, v) => `<td class="r${v === '—' ? ' empty' : ''}" data-label="${lbl}"><span>${v}</span></td>`;
-  return `<tr><td class="rowhead">${label}</td>${c('Posição', `<b>${x.pos ?? '—'}º</b> <span class="small">de ${fieldSize(r)}</span>`)}${c('Kart', esc(x.no))}
-    ${c('Voltas', x.laps || st?.n || '—')}${c('Melhor volta', fmtTime(x.best))}${c('% da + rápida', x.best!=null?'+'+pctOff(x,r).toFixed(1)+'%':'—')}
-    ${c('Tempo total', fmtTime(x.total))}${c('Diff', esc(x.diff) || '—')}${c('Espaço', esc(x.gap) || '—')}
-    ${c('S1', fmtTime(s('s1')))}${c('S2', fmtTime(s('s2')))}${c('S3', fmtTime(s('s3')))}
-    ${c('Vel. máx.', s('top')!=null ? s('top').toFixed(1) : '—')}</tr>`;
-}
-
-function kartLine(r, x, label){
-  const t = topOf(x, r), g = r.ref?.topAvg;
-  if(t == null) return '';
-  const d = g != null ? t - g : null;
-  const verdict = d == null ? '' : d >= 0.5 ? 'kart acima da média do grid' : d <= -0.5 ? 'kart abaixo da média do grid' : 'kart na média do grid';
-  return `<p class="note"><b>Kart nº ${esc(x.no)}</b>${tip('kartLine')} (${label}): ${t.toFixed(1)} km/h na reta${g != null ? ` · média do grid ${g.toFixed(1)} · mais rápido ${r.ref.topMax.toFixed(1)}
-    · <span class="${d>=0?'up':'down'}">${signed(d,1,' km/h')}</span>, ${verdict}` : ''}.</p>`;
-}
-
-function sectorTable(st){
-  const ks = ['s1','s2','s3'].filter(k => st.sec[k].best != null);
-  if(!ks.length) return '';
-  const worst = ks.filter(k => st.sec[k].loss != null).reduce((a,k) => a == null || st.sec[k].loss > st.sec[a].loss ? k : a, null);
-  const worstIrr = ks.filter(k => st.sec[k].irr != null).reduce((a,k) => a == null || st.sec[k].irr > st.sec[a].irr ? k : a, null);
-  return `<div class="scroll"><table class="stack">
-    <tr><th>Setor</th><th class="r">Seu melhor${tip('secBest')}</th><th class="r">Melhor da sessão${tip('secRef')}</th><th class="r">Perda (técnica)${tip('secLoss')}</th>
-        <th class="r">Sua média${tip('secAvg')}</th><th class="r">Irregularidade${tip('secIrr')}</th></tr>
-    ${ks.map(k => { const s = st.sec[k]; return `<tr><td class="rowhead"><b>${k.toUpperCase()}</b></td><td class="r" data-label="Seu melhor">${fmtTime(s.best)}</td>
-      <td class="r" data-label="Melhor da sessão">${fmtTime(s.ref)}</td>
-      <td class="r ${k===worst?'worst':''}" data-label="Perda (técnica)">${s.loss!=null ? plusSec(s.loss) : '—'}</td><td class="r" data-label="Sua média">${fmtTime(s.avg)}</td>
-      <td class="r ${k===worstIrr?'worst':''}" data-label="Irregularidade">${s.irr!=null ? plusSec(s.irr) : '—'}</td></tr>`; }).join('')}
-  </table></div>
-  <p class="note">${worst ? `Maior perda no <b>${worst.toUpperCase()}</b>` : ''}${worstIrr ? `${worst ? '; ' : ''}mais irregular no <b>${worstIrr.toUpperCase()}</b>` : ''}.
-    ${ks.length < 3 ? 'Nessa sessão o kartódromo não registrou todos os setores.' : ''}</p>`;
-}
-
-function rhythmBlock(st){
-  if(st.thirds[0] == null) return '';
-  const [a,b,c] = st.thirds, best = Math.min(a,b,c);
-  const RT = {'Início':'start', 'Meio':'mid', 'Fim':'end'};
-  const cell = (lbl, v) => `<div class="stat"><div class="lbl">${lbl}${tip(RT[lbl])}</div><div class="val ${v===best?'purple':''}">${fmtTime(v)}</div></div>`;
-  const fade = c - b;
-  return `<h3>Ritmo ao longo da prova${tip('rhythm')}</h3><div class="stats">
-    ${st.lap1 != null ? `<div class="stat"><div class="lbl">1ª volta (largada)${tip('lap1')}</div><div class="val">${fmtTime(st.lap1)}</div></div>` : ''}
-    ${cell('Início', a)}${cell('Meio', b)}${cell('Fim', c)}
-    <div class="stat"><div class="lbl">Queda no fim${tip('fade')}</div><div class="val ${fade<=0?'up':'down'}">${plusSec(fade)}</div></div>
-    <div class="stat"><div class="lbl">Erros${tip('errors')}</div><div class="val">${st.errors}</div></div>
-  </div>`;
-}
-
-const NOTE_FIELDS = [
-  {k:'kart',  label:'Kart (sensação)', opts:['bom','normal','ruim']},
-  {k:'pista', label:'Pista',           opts:['seca','úmida','molhada']},
-  {k:'clima', label:'Clima / temperatura', ph:'ex.: frio, 18°C'},
-  {k:'peso',  label:'Seu peso (kg)',   type:'number'},
-];
 let nameOf = k => k;
-function notesForm(r, k){
-  const n = r.notes?.[k] || {};
-  return `<p class="small" style="margin-top:0">Anotações de ${esc(nameOf(k))}${tip('notes')}</p>
-    <div class="notes" data-notes="${esc(r.id)}">
-      ${NOTE_FIELDS.map(f => `<label>${f.label}${f.opts
-        ? `<select data-n="${f.k}"><option value="">—</option>${f.opts.map(o => `<option ${n[f.k]===o?'selected':''}>${o}</option>`).join('')}</select>`
-        : `<input type="${f.type||'text'}" ${f.type==='number'?'step="0.1"':''} data-n="${f.k}" value="${esc(n[f.k]??'')}" placeholder="${esc(f.ph||'')}">`}</label>`).join('')}
-      <label class="full">Observações<textarea data-n="obs" placeholder="ex.: errei a freada da curva 3; kart puxando para a direita">${esc(n.obs||'')}</textarea></label>
-    </div>`;
+
+/* ---------- campeonato da família ---------- */
+let champ = null;   // campeonato.json: equipes, regulamento e etapas fora da Granja Viana (planilha)
+async function loadChamp(){
+  try{
+    const res = await fetch('campeonato.json', {cache:'no-store'});
+    if(res.ok) champ = await res.json();
+  }catch(e){}
+}
+const F1_POINTS = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
+// o campeonato usa só as etapas da planilha (campeonato.json); as provas importadas na Granja Viana
+// continuam no banco, mas não contam. Para voltar a contá-las, troque para true.
+const COUNT_IMPORTED_RACES = false;
+// provas importadas que não contam mesmo com COUNT_IMPORTED_RACES = true
+const EXCLUDED_RACES = [
+  '2026-10-17|22:00|101|RENTAL - PROVA 16 - 22:00',
+];
+const ord = n => n == null ? '—' : n + 'º';
+const teamOf = code => champ?.equipes?.find(t => t.pilotos.includes(code)) || null;
+const teamTag = code => { const t = teamOf(code); return t ? `<span class="team"><i style="background:${t.cor}"></i>${esc(t.nome)}</span>` : '<span class="team muted"><i></i>sem equipe</span>'; };
+const shortName = code => { const n = nameOf('c' + code); return n.split(' ').slice(0, 2).map(w => w[0] + w.slice(1).toLowerCase()).join(' '); };
+
+// todas as etapas: cada prova importada (só pilotos principais) + as da planilha (ex.: outro kartódromo)
+function champStages(){
+  const auto = !COUNT_IMPORTED_RACES ? [] : sortedRaces().filter(r => kindOf(r) === 'prova' && !EXCLUDED_RACES.includes(r.id)).map(r => {
+    const rs = r.results.filter(x => x.code).sort((a,b) => (a.pos ?? 999) - (b.pos ?? 999));
+    return {data:r.date, hora:r.time, kartodromo:'Granja Viana', circuito:r.track, sessao:r.session, fonte:'arquivo', fieldSize:fieldSize(r),
+      resultados: rs.map((x,i) => ({codigo:x.code, posicao: x.pos ? i + 1 : null, posGeral:x.pos, melhorVolta:x.best, voltas:x.laps,
+        velMax: topOf(x, r), batidas:null, punicoes:null, penalidade: x.comment || null, obs:null}))};
+  });
+  const manual = (champ?.etapas || []).map(e => ({data:e.data, hora:'', kartodromo:e.kartodromo, fonte:'planilha',
+    resultados: e.resultados.filter(r => r.codigo).map(r => ({...r}))}));
+  const all = [...auto, ...manual].sort((a,b) => (a.data + a.hora).localeCompare(b.data + b.hora));
+  all.forEach((e,i) => {
+    e.nome = `Etapa ${i + 1}`;
+    for(const r of e.resultados) r.pontos = r.posicao ? (F1_POINTS[r.posicao - 1] || 0) : 0;
+  });
+  return all;
 }
 
-function lapSection(r, x, label){
-  const st = lapStats(x, r);
-  if(!st) return '';
-  const STAT_TIP = {'Melhor volta':'best', 'Média das voltas':'avg', 'Consistência':'sd', 'Volta ideal':'ideal', 'Voltas válidas':'valid'};
-  const stat = (lbl, val) => `<div class="stat"><div class="lbl">${lbl}${tip(STAT_TIP[lbl])}</div><div class="val">${val}</div></div>`;
-  const best = k => { const v = x.lapTimes.map(l => l[k]).filter(v => v != null); return v.length ? Math.min(...v) : null; };
-  const bs1 = best('s1'), bs2 = best('s2'), bs3 = best('s3');
-  const rows = x.lapTimes.map(l => {
-    const slow = l.time != null && l.time > st.best * SLOW_LAP;
-    const obs = l.pit ? 'box / volta incompleta' : slow ? 'lenta (fora da média)' : '';
-    const cls = (v,b) => v != null && v === b ? 'r purple' : 'r';
-    return `<tr><td class="r">${l.lap}</td><td class="${l.time===st.best?'r purple':slow||l.pit?'r muted':'r'}">${fmtTime(l.time)}</td>
-      <td class="r small">${l.time!=null && l.time!==st.best ? '+'+(l.time-st.best).toFixed(3) : ''}</td>
-      <td class="${cls(l.s1,bs1)}">${fmtTime(l.s1)}</td><td class="${cls(l.s2,bs2)}">${fmtTime(l.s2)}</td><td class="${cls(l.s3,bs3)}">${fmtTime(l.s3)}</td>
-      <td class="r">${l.sf!=null ? l.sf.toFixed(1) : '—'}</td><td class="r small">${l.leaderLap ?? ''}</td><td class="small">${obs}</td></tr>`;
-  }).join('');
-  return `<h3>${label}${tip('lapByLap')}</h3>
-    <div class="stats">
-      ${stat('Melhor volta', `${fmtTime(st.best)} <span class="small">(volta ${st.bestLap})</span>`)}
-      ${stat('Média das voltas', fmtTime(st.avg))}
-      ${stat('Consistência', st.sd!=null ? '±'+st.sd.toFixed(2)+'s' : '—')}
-      ${stat('Volta ideal', st.ideal!=null ? `${fmtTime(st.ideal)} <span class="small">(−${(st.best-st.ideal).toFixed(3)})</span>` : '—')}
-      ${stat('Voltas válidas', `${st.clean} de ${st.n}`)}
-    </div>
-    <div class="lapchart"><canvas data-lapchart="${esc(r.id)}"></canvas></div>
-    ${label === 'Prova' ? rhythmBlock(st) : ''}
-    <details class="laptable"><summary>Ver todas as voltas</summary><div class="scroll"><table>
-      <tr><th class="r">Volta</th><th class="r">Tempo</th><th class="r">Δ melhor${tip('lapDelta')}</th><th class="r">S1${tip('thSectors')}</th><th class="r">S2</th><th class="r">S3</th>
-          <th class="r">Vel. (km/h)${tip('lapSpeed')}</th><th class="r">Volta do líder${tip('leaderLap')}</th><th></th></tr>${rows}
-    </table></div></details>`;
+function standings(etapas){
+  const map = new Map();
+  for(const e of etapas) for(const r of e.resultados){
+    const s = map.get(r.codigo) || {codigo:r.codigo, pts:0, pos:[], etapas:0, best:null, vel:null, batidas:0, punicoes:0};
+    s.pts += r.pontos; s.etapas++;
+    if(r.posicao) s.pos.push(r.posicao);
+    if(r.melhorVolta != null && (s.best == null || r.melhorVolta < s.best)) s.best = r.melhorVolta;
+    if(r.velMax != null && (s.vel == null || r.velMax > s.vel)) s.vel = r.velMax;
+    s.batidas += r.batidas || 0; s.punicoes += r.punicoes || 0;
+    map.set(r.codigo, s);
+  }
+  const count = (s, p) => s.pos.filter(x => x === p).length;
+  // desempate como na F1: mais vitórias, depois mais 2º lugares, 3º lugares...
+  return [...map.values()].map(s => ({...s, wins:count(s,1), podiums:s.pos.filter(p => p <= 3).length}))
+    .sort((a,b) => {
+      if(b.pts !== a.pts) return b.pts - a.pts;
+      for(let p = 1; p <= 10; p++){ const d = count(b,p) - count(a,p); if(d) return d; }
+      return (a.best ?? 1e9) - (b.best ?? 1e9) || (a.batidas + a.punicoes) - (b.batidas + b.punicoes);
+    });
 }
 
-function drawLapChart(canvas){
-  if(!window.Chart || !canvas || !canvas.offsetParent) return;   // só desenha se estiver visível
-  const r = state.races.find(r => r.id === canvas.dataset.lapchart);
-  const x = r?.results.find(x => keyOf(x) === state.view);
-  const st = lapStats(x, r);
-  if(!st) return;
-  lapCharts.get(canvas)?.destroy();
-  const cs = getComputedStyle(document.documentElement);
-  const muted = cs.getPropertyValue('--muted').trim(), grid = cs.getPropertyValue('--border').trim();
-  const accent = cs.getPropertyValue('--accent').trim(), purple = cs.getPropertyValue('--purple').trim();
-  const L = x.lapTimes;
-  const colors = L.map(l => l.time === st.best ? purple : (l.pit || l.time > st.best*SLOW_LAP) ? muted : accent);
-  lapCharts.set(canvas, new Chart(canvas, {type:'line', data:{labels: L.map(l => l.lap), datasets:[
-      {label:'Tempo da volta', data:L.map(l => l.time), borderColor:accent, pointBackgroundColor:colors, pointBorderColor:colors, pointRadius:4, borderWidth:2, tension:.15},
-      ...(st.avg ? [{label:'Média', data:L.map(() => st.avg), borderColor:muted, borderDash:[6,4], borderWidth:1.5, pointRadius:0}] : [])
-    ]}, options:{
-      responsive:true, maintainAspectRatio:false, interaction:{mode:'index', intersect:false},
-      scales:{
-        y:{min:Math.floor(st.best - 0.5), max:Math.ceil(st.best*SLOW_LAP), ticks:{color:muted, callback:v=>fmtTime(v)}, grid:{color:grid}},
-        x:{title:{display:true, text:'Volta', color:muted}, ticks:{color:muted}, grid:{color:grid}}
-      },
-      plugins:{legend:{labels:{color:muted}}, tooltip:{callbacks:{label:c => `${c.dataset.label}: ${fmtTime(c.raw)}`}}}
-  }}));
-}
+function renderChamp(){
+  const etapas = champStages(), S = standings(etapas), last = etapas.at(-1);
+  $('#champName').textContent = champ.nome || 'Campeonato';
+  $('#champInfo').textContent = `· ${etapas.length} etapa(s) · ${S.length} pilotos · pontuação da Fórmula 1`;
+  const card = (lbl, k, val, sub) => `<div class="card kpi"><div class="lbl">${lbl}${tip(k)}</div><div class="val">${val}</div><div class="sub">${sub}</div></div>`;
+  const lead = S[0], second = S[1];
+  const wins = S.filter(s => s.wins).sort((a,b) => b.wins - a.wins)[0];
+  $('#champCards').innerHTML =
+    (lead ? card('Líder', 'champLeader', esc(shortName(lead.codigo).split(' ')[0]), `${lead.pts} pts${second ? ` · ${lead.pts - second.pts} à frente de ${esc(shortName(second.codigo).split(' ')[0])}` : ''}`) : '') +
+    card('Etapas', '', etapas.length, last ? `última: ${brDate(last.data)} · ${esc(last.kartodromo)}` : '') +
+    (wins ? card('Mais vitórias', '', wins.wins, esc(shortName(wins.codigo))) : '');
 
-// detalhes da corrida em abas: sessões, volta a volta, setores e anotações
-let detailTab = 'sessoes';
-function renderDetail(g){
-  for(const c of lapCharts.values()) c.destroy();
-  lapCharts.clear();
-  const k = state.view, main = g.prova || g.tomada;
-  const x = g.prova?.results.find(x => keyOf(x) === k), q = g.tomada?.results.find(x => keyOf(x) === k);
-  const stx = x && lapStats(x, g.prova), stq = q && lapStats(q, g.tomada);
-  const tabs = [['sessoes','Prova e qualify'], ...(stx || stq ? [['voltas','Volta a volta'], ['setores','Setores']] : []), ['notas','Anotações']];
-  if(!tabs.some(t => t[0] === detailTab)) detailTab = 'sessoes';
-  const pane = (id, html) => `<div class="pane" data-pane="${id}" ${id===detailTab?'':'hidden'}>${html}</div>`;
-  $('#detail').innerHTML = `
-    <div class="subtabs">${tabs.map(([id,lbl]) => `<button type="button" class="subtab ${id===detailTab?'on':''}" data-rtab="${id}">${lbl}</button>`).join('')}</div>
-    ${pane('sessoes', `
+  const medal = i => ['🥇','🥈','🥉'][i] || '';
+  const c = (lbl, v) => `<td class="r" data-label="${lbl}"><span>${v}</span></td>`;
+  $('#champTable').innerHTML = `<tr><th>Pos</th><th>Piloto</th><th>Equipe</th><th class="r">Pontos</th><th class="r">Vitórias</th><th class="r">Pódios</th>
+      <th class="r">Etapas</th><th class="r">Melhor posição</th></tr>` +
+    S.map((s,i) => `<tr class="${i===0?'leader':''}"><td class="rowhead"><span class="medal">${medal(i)}</span> ${i+1}º · ${driverBtn(s.codigo)}</td>
+      <td class="hide-sm"><span class="medal">${medal(i)}</span> ${i+1}º</td><td class="hide-sm">${driverBtn(s.codigo)}</td>
+      <td data-label="Equipe"><span>${teamTag(s.codigo)}</span></td>
+      ${c('Pontos', `<b>${s.pts}</b>`)}${c('Vitórias', s.wins)}${c('Pódios', s.podiums)}${c('Etapas', s.etapas)}${c('Melhor posição', ord(Math.min(...s.pos)))}</tr>`).join('');
+
+  $('#champStages').innerHTML = [...etapas].reverse().map(e => {
+    const fast = Math.min(...e.resultados.map(r => r.melhorVolta ?? 1e9));
+    const extra = e.resultados.some(r => r.batidas != null);
+    return `<div class="panel"><h2>${esc(e.nome)} · ${brDate(e.data)} · ${esc(e.kartodromo)}${e.circuito ? ` <span class="small">circuito ${esc(e.circuito)}${e.sessao ? ' · prova ' + esc(e.sessao) : ''}</span>` : ''}</h2>
       <div class="scroll"><table class="stack">
-        <tr><th>Sessão${tip('session')}</th><th class="r">Pos${tip('thPos')}</th><th class="r">Kart${tip('thKart')}</th><th class="r">Voltas${tip('thLaps')}</th>
-            <th class="r">Melhor volta${tip('best')}</th><th class="r">% da + rápida${tip('thPct')}</th><th class="r">Tempo total${tip('thTotal')}</th>
-            <th class="r">Diff${tip('thDiff')}</th><th class="r">Espaço${tip('thGap')}</th>
-            <th class="r">S1${tip('thSectors')}</th><th class="r">S2</th><th class="r">S3</th><th class="r">Vel. máx.${tip('thTop')}</th></tr>
-        ${g.tomada ? sessionRow('Qualify', g.tomada, q) : ''}
-        ${g.prova ? sessionRow('Prova', g.prova, x) : ''}
+        <tr><th>Pos</th><th>Piloto</th><th>Equipe</th><th class="r">Pontos</th><th class="r">Pos. geral${tip('champPosGeral')}</th><th class="r">Melhor volta</th>
+            <th class="r">Voltas</th>${extra ? '<th class="r">Batidas</th><th class="r">Punições</th>' : ''}<th>Observações</th></tr>
+        ${e.resultados.map(r => `<tr><td class="rowhead">${ord(r.posicao)} · ${driverBtn(r.codigo)}</td><td class="hide-sm">${r.posicao ? ord(r.posicao) : 'DQ'}</td>
+          <td class="hide-sm">${driverBtn(r.codigo)}</td><td data-label="Equipe"><span>${teamTag(r.codigo)}</span></td>
+          ${c('Pontos', `<b>${r.pontos}</b>`)}${c('Pos. geral', r.posGeral ? `${r.posGeral}º${e.fieldSize ? ` <span class="small">de ${e.fieldSize}</span>` : ''}` : '—')}
+          <td class="r ${r.melhorVolta === fast ? 'purple' : ''}" data-label="Melhor volta"><span>${fmtTime(r.melhorVolta)}</span></td>
+          ${c('Voltas', r.voltas ?? '—')}${extra ? c('Batidas', r.batidas ?? '—') + c('Punições', r.punicoes ?? '—') : ''}
+          <td data-label="Obs." class="${r.penalidade || r.obs ? '' : 'empty'}"><span>${[r.penalidade && '⏱ ' + esc(r.penalidade), r.obs && esc(r.obs)].filter(Boolean).join(' · ') || '—'}</span></td></tr>`).join('')}
       </table></div>
-      ${q ? kartLine(g.tomada, q, 'qualify') : ''}${x ? kartLine(g.prova, x, 'prova') : ''}
-      ${g.prova && x && !x.lapTimes ? '<p class="note">Importe o arquivo "tempo de voltas" dessa prova para ver o volta a volta e os setores.</p>' : ''}
-      <div class="race-tools">
-        <label>Data: <input type="date" value="${main.date}" data-gdate="${esc(g.key)}"></label>
-        <label>Circuito: <input type="text" size="5" value="${esc(main.track)}" data-gtrack="${esc(g.key)}"></label>
-        ${g.prova ? `<button class="btn danger" data-del="${esc(g.prova.id)}">Remover prova</button>` : ''}
-        ${g.tomada ? `<button class="btn danger" data-del="${esc(g.tomada.id)}">Remover qualify</button>` : ''}
-      </div>`)}
-    ${tabs.some(t => t[0]==='voltas') ? pane('voltas', (x ? lapSection(g.prova, x, 'Prova') : '') + (q ? lapSection(g.tomada, q, 'Qualify') : '')) : ''}
-    ${tabs.some(t => t[0]==='setores') ? pane('setores', `<p class="small" style="margin-top:0">Onde está o tempo${tip('sectors')}</p>
-      ${stx ? `<h3>Prova</h3>${sectorTable(stx)}` : ''}${stq ? `<h3>Qualify</h3>${sectorTable(stq)}` : ''}`) : ''}
-    ${pane('notas', notesForm(main, k))}`;
-  document.querySelectorAll('#detail [data-pane]:not([hidden]) canvas[data-lapchart]').forEach(drawLapChart);
+      <p class="note">Posição e pontos contam só os pilotos do campeonato. Em roxo: volta mais rápida entre eles.${e.fonte === 'planilha' ? ' Etapa registrada na planilha.' : ''}</p></div>`;
+  }).join('');
+
+  $('#champRules').innerHTML = `<div class="rules">
+    <div><h3>Pontuação por etapa (Fórmula 1)</h3><div class="ptsgrid">
+      ${F1_POINTS.map((p,i) => `<div class="stat"><div class="lbl">${i+1}º lugar</div><div class="val">${p} pts</div></div>`).join('')}
+      <div class="stat"><div class="lbl">11º+ / DQ</div><div class="val">0 pts</div></div></div>
+      <p class="note">A posição é a ordem de chegada entre os pilotos do campeonato naquela corrida.</p></div>
+    <div><h3>Critérios de desempate</h3><ol>${(champ.desempate || []).map(d => `<li>${esc(d)}</li>`).join('')}</ol></div></div>`;
+}
+
+const fullName = code => nameOf('c' + code).toLowerCase().replace(/(^|\s)\S/g, ch => ch.toUpperCase());
+const driverBtn = code => `<button type="button" class="linkbtn" data-driver="${esc(code)}">${esc(shortName(code))}</button>`;
+
+/* ---------- dados individuais do piloto ---------- */
+function renderDriver(code){
+  const etapas = champStages(), S = standings(etapas);
+  const idx = S.findIndex(s => s.codigo === code), s = S[idx];
+  const team = teamOf(code);
+  const el = $('#driverPage');
+  if(!s){ el.innerHTML = `<button type="button" class="backbtn" data-back>← Classificação</button><div class="panel">Piloto não encontrado no campeonato.</div>`; return; }
+  const mine = etapas.map(e => ({e, r: e.resultados.find(r => r.codigo === code)})).filter(o => o.r);
+  const card = (lbl, val, sub='') => `<div class="card kpi"><div class="lbl">${lbl}</div><div class="val">${val}</div><div class="sub">${sub}</div></div>`;
+  const leader = S[0], ahead = S[idx - 1];
+  const gap = idx === 0 ? (S[1] ? `${s.pts - S[1].pts} pts à frente do 2º` : 'líder') : `${ahead.pts - s.pts} pts atrás de ${esc(shortName(ahead.codigo).split(' ')[0])}`;
+  const vel = s.vel != null ? s.vel.toFixed(1) : '—';
+  const c = (lbl, v) => `<td class="r" data-label="${lbl}"><span>${v}</span></td>`;
+  el.innerHTML = `
+    <button type="button" class="backbtn" data-back>← Classificação</button>
+    <div class="panel"><div class="driverhead">
+      <span class="bar" style="background:${team ? team.cor : 'var(--border)'}"></span>
+      <div><h2>${esc(fullName(code))}</h2>
+        <div class="small">${teamTag(code)} · código ${esc(code)}</div></div>
+      ${team?.logo ? `<img class="teamlogo" src="${esc(team.logo)}" alt="Logo da equipe ${esc(team.nome)}">` : ''}
+    </div></div>
+    <div class="kpis">
+      ${card('Posição no campeonato', `${idx + 1}º`, gap)}
+      ${card('Pontos', s.pts, `${s.etapas} etapa(s)`)}
+      ${card('Vitórias', s.wins, `${s.podiums} pódio(s)`)}
+      ${card('Melhor volta', fmtTime(s.best))}
+      ${card('Maior velocidade', vel, vel !== '—' ? 'km/h' : '')}
+      ${card('Batidas / punições', `${s.batidas} / ${s.punicoes}`)}
+    </div>
+    <div class="panel"><h2>Resultados por etapa</h2>
+      <div class="scroll"><table class="stack">
+        <tr><th>Etapa</th><th>Kartódromo</th><th class="r">Posição</th><th class="r">Pontos</th><th class="r">Pos. geral${tip('champPosGeral')}</th>
+            <th class="r">Melhor volta</th><th class="r">Voltas</th><th class="r">Vel. máx.</th><th class="r">Batidas</th><th class="r">Punições</th><th>Observações</th></tr>
+        ${[...mine].reverse().map(({e, r}) => `<tr><td class="rowhead">${esc(e.nome)} · ${brDate(e.data)}</td>
+          <td class="hide-sm"><b>${esc(e.nome)}</b> <span class="small">${brDate(e.data)}</span></td><td data-label="Kartódromo"><span>${esc(e.kartodromo)}</span></td>
+          ${c('Posição', r.posicao ? `<b>${ord(r.posicao)}</b>` : 'DQ')}${c('Pontos', `<b>${r.pontos}</b>`)}
+          ${c('Pos. geral', r.posGeral ? `${r.posGeral}º${e.fieldSize ? ` <span class="small">de ${e.fieldSize}</span>` : ''}` : '—')}
+          ${c('Melhor volta', fmtTime(r.melhorVolta))}${c('Voltas', r.voltas ?? '—')}${c('Vel. máx.', r.velMax != null ? r.velMax.toFixed(1) : '—')}
+          ${c('Batidas', r.batidas ?? '—')}${c('Punições', r.punicoes ?? '—')}
+          <td data-label="Obs." class="${r.penalidade || r.obs ? '' : 'empty'}"><span>${[r.penalidade && '⏱ ' + esc(r.penalidade), r.obs && esc(r.obs)].filter(Boolean).join(' · ') || '—'}</span></td></tr>`).join('')}
+      </table></div></div>`;
 }
 
 /* ---------- render geral ---------- */
 function render(){
-  const has = state.races.length > 0;
-  $('#empty').hidden = has;
-  $('#dashboard').hidden = !has;
-  if(!has) return;
   const drivers = driverIndex();
   nameOf = k => drivers.get(k)?.name || k;
-  renderPicker(drivers);
-  const groups = groupsFor(state.view);
-  renderRacePicker(groups);
-  const g = groups.find(g => g.key === state.race);
-  if(!g) return;
-  const main = g.prova || g.tomada;
-  const x = g.prova?.results.find(x => keyOf(x) === state.view);
-  const q = g.tomada?.results.find(x => keyOf(x) === state.view) || null;
-  const o = x ? {r:g.prova, x, t:g.tomada, q, st:lapStats(x, g.prova)} : null;
-  const gain = o && gainOf(o);
-  $('#raceHead').innerHTML = `<b>${raceLabel(main)}</b> · ${g.prova ? 'Prova' : 'Qualify'} ${esc(main.session)} · circuito ${esc(main.track)} · ${fieldSize(main)} pilotos
-    <span class="small">· 🏆 ${esc(main.winnerName||'—')} · ⏱ volta mais rápida ${fmtTime(fastest(main))} (${esc(main.fastestName||'')})</span>`;
-  $('#raceLine').innerHTML = o ? `
-    <div class="stat"><div class="lbl">Posição${tip('thPos')}</div><div class="val">${o.x.pos}º <span class="small">de ${fieldSize(o.r)}</span></div></div>
-    ${q ? `<div class="stat"><div class="lbl">Largada (qualify)${tip('session')}</div><div class="val">${q.pos}º</div></div>` : ''}
-    ${gain != null ? `<div class="stat"><div class="lbl">Posições ganhas${tip('gain')}</div><div class="val ${gain>0?'up':gain<0?'down':''}">${gain===0?'0':signed(gain)}</div></div>` : ''}
-    <div class="stat"><div class="lbl">Melhor volta${tip('best')}</div><div class="val">${fmtTime(o.x.best)}</div></div>
-    ${o.st?.ideal != null ? `<div class="stat"><div class="lbl">Volta ideal${tip('ideal')}</div><div class="val">${fmtTime(o.st.ideal)}</div></div>` : ''}` : '';
-  renderKpis(o);
-  renderFocus(o);
-  renderDetail(g);
+  const has = !!champ && (state.races.length > 0 || champ.etapas?.length > 0);
+  const code = (location.hash.match(/^#piloto\/(\d+)/) || [])[1];
+  $('#empty').hidden = has;
+  $('#champ').hidden = !has || !!code;
+  $('#driverPage').hidden = !has || !code;
+  if(!has) return;
+  if(code) renderDriver(code); else renderChamp();
 }
+// nome do piloto abre os dados dele; o botão voltar do navegador também funciona
+document.addEventListener('click', e => {
+  const d = e.target.closest('[data-driver]');
+  if(d){ location.hash = 'piloto/' + d.dataset.driver; return; }
+  if(e.target.closest('[data-back]')) location.hash = '';
+});
+addEventListener('hashchange', () => { render(); scrollTo(0, 0); });
 
 /* ---------- eventos ---------- */
-$('#fileInput').addEventListener('change', e => { importFiles([...e.target.files]); e.target.value=''; });
-$('#driver').addEventListener('change', e => { state.view = e.target.value; save(); render(); });
-$('#race').addEventListener('change', e => { state.race = e.target.value; save(); render(); });
-
-$('#detail').addEventListener('click', e => {
-  const t = e.target.closest('[data-rtab]');
-  if(t){
-    detailTab = t.dataset.rtab;
-    $('#detail').querySelectorAll('[data-rtab]').forEach(b => b.classList.toggle('on', b === t));
-    $('#detail').querySelectorAll('[data-pane]').forEach(p => p.hidden = p.dataset.pane !== detailTab);
-    $('#detail').querySelectorAll(`[data-pane="${detailTab}"] canvas[data-lapchart]`).forEach(drawLapChart);
-    return;
-  }
-  const del = e.target.closest('[data-del]');
-  if(del && confirm('Remover esta sessão?')){
-    const id = del.dataset.del;
-    dbDelete(id).then(() => { state.races = state.races.filter(r => r.id !== id); save(); render(); }).catch(dbFail);
-  }
-});
-// data e circuito valem para a prova e o qualify do mesmo evento; anotações salvam sem redesenhar
-$('#detail').addEventListener('change', e => {
-  const t = e.target;
-  if(t.dataset.n){
-    const r = state.races.find(r => r.id === t.closest('[data-notes]').dataset.notes);
-    if(!r) return;
-    r.notes = r.notes || {};
-    const n = r.notes[state.view] = r.notes[state.view] || {};
-    n[t.dataset.n] = t.type === 'number' ? (t.value === '' ? null : +t.value) : t.value.trim();
-    dbPut(r).then(() => toast('Anotação salva')).catch(dbFail);
-    save();
-    return;
-  }
-  const key = t.dataset.gtrack || t.dataset.gdate, v = t.value.trim();
-  if(!key || !v) return;
-  for(const r of state.races.filter(r => groupKey(r) === key)){
-    if(t.dataset.gtrack) r.track = v; else r.date = v;
-    dbPut(r).catch(dbFail);
-  }
-  save(); render();
-});
-
-$('#exportBtn').addEventListener('click', () => {
-  const blob = new Blob([JSON.stringify(state, null, 1)], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = `kart-backup-${toISO(new Date())}.json`; a.click();
-  URL.revokeObjectURL(a.href);
-});
-$('#backupInput').addEventListener('change', async e => {
-  const f = e.target.files[0]; e.target.value = '';
-  if(!f) return;
-  try{
-    const s = JSON.parse(await f.text());
-    if(!Array.isArray(s.races)) throw new Error();
-    let n = 0;
-    for(const r of s.races) if(!state.races.some(x => x.id===r.id)){ prepSession(r); await dbPut(r); state.races.push(r); n++; }
-    applyTracking(); render(); toast(`${n} sessão(ões) restaurada(s)`);
-  }catch(err){ toast('Arquivo de backup inválido.'); }
-});
-
-document.addEventListener('dragover', e => { e.preventDefault(); document.body.classList.add('dragging'); });
-document.addEventListener('dragleave', e => { if(!e.relatedTarget) document.body.classList.remove('dragging'); });
-document.addEventListener('drop', e => {
-  e.preventDefault(); document.body.classList.remove('dragging');
-  if(readOnly) return;
-  const files = [...e.dataTransfer.files].filter(f => /\.html?$/i.test(f.name));
-  if(files.length) importFiles(files);
-});
-
 const tipBox = Object.assign(document.createElement('div'), {id:'tipbox', hidden:true, role:'tooltip'});
 document.body.appendChild(tipBox);
 let tipFor = null;
@@ -1097,7 +847,7 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') hideTip(); })
 addEventListener('scroll', hideTip, true);
 addEventListener('resize', hideTip);
 
-connectDb().then(() => { applyTracking(); render(); });
+Promise.all([connectDb(), loadChamp()]).then(() => { applyTracking(); render(); });
 </script>
 </body>
 </html>

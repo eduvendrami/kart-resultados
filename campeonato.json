@@ -1,0 +1,178 @@
+{
+ "nome": "Campeonato de Kart da Família",
+ "atualizado": "2026-10-30T16:10:37",
+ "pontuacao": [
+  {
+   "posicao": 1,
+   "pontos": 25
+  },
+  {
+   "posicao": 2,
+   "pontos": 18
+  },
+  {
+   "posicao": 3,
+   "pontos": 15
+  },
+  {
+   "posicao": 4,
+   "pontos": 12
+  },
+  {
+   "posicao": 5,
+   "pontos": 10
+  },
+  {
+   "posicao": 6,
+   "pontos": 8
+  },
+  {
+   "posicao": 7,
+   "pontos": 6
+  },
+  {
+   "posicao": 8,
+   "pontos": 4
+  },
+  {
+   "posicao": 9,
+   "pontos": 2
+  },
+  {
+   "posicao": 10,
+   "pontos": 1
+  }
+ ],
+ "sistema": "Fórmula 1",
+ "desempate": [
+  "Maior número de vitórias",
+  "Maior número de 2º lugares",
+  "Maior número de 3º lugares (e assim por diante)",
+  "Melhor volta mais rápida",
+  "Menos punições e batidas"
+ ],
+ "equipes": [
+  {
+   "nome": "Ferrari",
+   "cor": "#E8002D",
+   "pilotos": [
+    "240461"
+   ],
+   "logo": "equipes/eduardo.png"
+  },
+  {
+   "nome": "McLaren",
+   "cor": "#FF8000",
+   "pilotos": [
+    "245424"
+   ],
+   "logo": "equipes/isaac.png"
+  },
+  {
+   "nome": "Red Bull Racing",
+   "cor": "#3671C6",
+   "pilotos": [
+    "214706"
+   ],
+   "logo": "equipes/vinicius.png"
+  },
+  {
+   "nome": "Mercedes",
+   "cor": "#00A19C",
+   "pilotos": [
+    "245421"
+   ],
+   "logo": "equipes/rebeca.png"
+  },
+  {
+   "nome": "Audi",
+   "cor": "#F0533A",
+   "pilotos": [
+    "245426"
+   ],
+   "logo": "equipes/renata.png"
+  }
+ ],
+ "etapas": [
+  {
+   "nome": "Etapa 1",
+   "data": "2026-10-24",
+   "kartodromo": "KART SAN MARINO",
+   "resultados": [
+    {
+     "piloto": "Eduardo Vendrami",
+     "codigo": "240461",
+     "posicao": 1,
+     "posGeral": 7,
+     "melhorVolta": 63.041,
+     "voltas": 19,
+     "velMax": 68.5,
+     "batidas": 0,
+     "punicoes": 0,
+     "penalidade": null,
+     "pontos": 25,
+     "obs": null
+    },
+    {
+     "piloto": "Isaac Martins",
+     "codigo": "245424",
+     "posicao": 2,
+     "posGeral": 9,
+     "melhorVolta": 64.654,
+     "voltas": 19,
+     "velMax": 67.2,
+     "batidas": 1,
+     "punicoes": 0,
+     "penalidade": "+ 10 SEG",
+     "pontos": 18,
+     "obs": "Penaluidade - Derrubou o Cone"
+    },
+    {
+     "piloto": "Vinicius Rosa",
+     "codigo": "214706",
+     "posicao": 3,
+     "posGeral": 13,
+     "melhorVolta": 65.686,
+     "voltas": 16,
+     "velMax": 66.0,
+     "batidas": 0,
+     "punicoes": 0,
+     "penalidade": null,
+     "pontos": 15,
+     "obs": null
+    },
+    {
+     "piloto": "Rebeca Rodrigues",
+     "codigo": "245421",
+     "posicao": 4,
+     "posGeral": 15,
+     "melhorVolta": 66.549,
+     "voltas": 16,
+     "velMax": 64.5,
+     "batidas": 2,
+     "punicoes": 1,
+     "penalidade": "+ 20 SEG",
+     "pontos": 12,
+     "obs": "Penalidade - Cone e Direção Perigosa"
+    },
+    {
+     "piloto": "Renata Faria",
+     "codigo": "245426",
+     "posicao": 5,
+     "posGeral": null,
+     "melhorVolta": 76.08,
+     "voltas": 15,
+     "velMax": 63.2,
+     "batidas": 1,
+     "punicoes": 0,
+     "penalidade": null,
+     "pontos": 10,
+     "obs": null
+    }
+   ]
+  }
+ ],
+ "avisos": [
+  "Aba 'RENATA' não bate com o registro de Renata Faria em 2026-10-24 (ignorada)."
+ ]
+}
