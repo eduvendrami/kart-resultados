@@ -170,6 +170,18 @@ tr.leader td{background:var(--accent-soft)}
 .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
 .rules ol{margin:0;padding-left:20px}
 .ptsgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:6px}
+.mlist{display:none;list-style:none;margin:0;padding:0}
+.mlist li{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:12px 6px;border-bottom:1px solid var(--border)}
+.mlist li:last-child{border-bottom:0}
+.mlist li.leader{background:var(--accent-soft);border-radius:10px;border-bottom-color:transparent}
+.mlist .pos{font-family:var(--font-num);font-weight:700;font-size:16px;text-align:center}
+.mlist .who{display:flex;flex-direction:column;gap:3px;min-width:0}
+.mlist .who .linkbtn{font-size:16px;line-height:1.2}
+.mlist .meta{display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px;font-size:12.5px;color:var(--muted)}
+.mlist .meta .purple{font-family:var(--font-num)}
+.mlist .obs{font-size:12px;color:var(--bad)}
+.mlist .pts{font-family:var(--font-num);font-weight:700;font-size:20px;text-align:right;line-height:1}
+.mlist .pts small{display:block;font-family:"Inter",sans-serif;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 /* ===== celular ===== */
 @media (max-width:640px){
   header{padding:12px 14px;gap:10px}
@@ -216,6 +228,14 @@ tr.leader td{background:var(--accent-soft)}
   .notes{grid-template-columns:1fr 1fr}
   .mainnav button{min-width:0;font-size:12px;padding:9px 8px}
   #tipbox{max-width:calc(100vw - 24px)}
+  .dtable{display:none}
+  .mlist{display:block}
+  #champCards{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  #champCards .card.kpi{padding:10px 10px 10px 13px}
+  #champCards .card.kpi .val{font-size:19px}
+  #champCards .card.kpi .sub{font-size:10.5px}
+  table.stack td::before{font-family:"Inter",sans-serif}
+  .driverhead h2{font-size:19px}
   .teamlogo{height:76px;width:120px}
 }
 </style>
@@ -238,13 +258,11 @@ tr.leader td{background:var(--accent-soft)}
   <section id="content">
     <div id="driverPage" class="view" hidden></div>
     <div id="champ" class="view" hidden>
-      <div class="panel">
-        <p class="racehead" style="margin:0"><b id="champName">Campeonato</b> <span class="small" id="champInfo"></span></p>
-      </div>
       <div id="champCards" class="kpis"></div>
       <div class="panel">
         <h2>Classificação geral <button type="button" class="tip" data-tip="champTable" aria-label="O que é isso?">?</button></h2>
-        <div class="scroll"><table class="stack" id="champTable"></table></div>
+        <div class="scroll dtable"><table class="stack" id="champTable"></table></div>
+        <ol class="mlist" id="champList"></ol>
       </div>
       <div id="champStages"></div>
       <div class="panel">
@@ -707,8 +725,6 @@ function standings(etapas){
 
 function renderChamp(){
   const etapas = champStages(), S = standings(etapas), last = etapas.at(-1);
-  $('#champName').textContent = champ.nome || 'Campeonato';
-  $('#champInfo').textContent = `· ${etapas.length} etapa(s) · ${S.length} pilotos · pontuação da Fórmula 1`;
   const card = (lbl, k, val, sub) => `<div class="card kpi"><div class="lbl">${lbl}${tip(k)}</div><div class="val">${val}</div><div class="sub">${sub}</div></div>`;
   const lead = S[0], second = S[1];
   const wins = S.filter(s => s.wins).sort((a,b) => b.wins - a.wins)[0];
@@ -726,11 +742,17 @@ function renderChamp(){
       <td data-label="Equipe"><span>${teamTag(s.codigo)}</span></td>
       ${c('Pontos', `<b>${s.pts}</b>`)}${c('Vitórias', s.wins)}${c('Pódios', s.podiums)}${c('Etapas', s.etapas)}${c('Melhor posição', ord(Math.min(...s.pos)))}</tr>`).join('');
 
+  // celular: posição · nome e equipe · pontos (o resto fica no perfil do piloto)
+  $('#champList').innerHTML = S.map((s,i) => `<li class="${i===0?'leader':''}">
+      <span class="pos">${medal(i) || (i+1) + 'º'}</span>
+      <span class="who">${driverBtn(s.codigo)}<span class="meta">${teamTag(s.codigo)}${s.wins ? `<span>${s.wins} vitória${s.wins > 1 ? 's' : ''}</span>` : ''}</span></span>
+      <span class="pts">${s.pts}<small>pts</small></span></li>`).join('');
+
   $('#champStages').innerHTML = [...etapas].reverse().map(e => {
     const fast = Math.min(...e.resultados.map(r => r.melhorVolta ?? 1e9));
     const extra = e.resultados.some(r => r.batidas != null);
     return `<div class="panel"><h2>${esc(e.nome)} · ${brDate(e.data)} · ${esc(e.kartodromo)}${e.circuito ? ` <span class="small">circuito ${esc(e.circuito)}${e.sessao ? ' · prova ' + esc(e.sessao) : ''}</span>` : ''}</h2>
-      <div class="scroll"><table class="stack">
+      <div class="scroll dtable"><table class="stack">
         <tr><th>Pos</th><th>Piloto</th><th>Equipe</th><th class="r">Pontos</th><th class="r">Pos. geral${tip('champPosGeral')}</th><th class="r">Melhor volta</th>
             <th class="r">Voltas</th>${extra ? '<th class="r">Batidas</th><th class="r">Punições</th>' : ''}<th>Observações</th></tr>
         ${e.resultados.map(r => `<tr><td class="rowhead">${ord(r.posicao)} · ${driverBtn(r.codigo)}</td><td class="hide-sm">${r.posicao ? ord(r.posicao) : 'DQ'}</td>
@@ -740,6 +762,12 @@ function renderChamp(){
           ${c('Voltas', r.voltas ?? '—')}${extra ? c('Batidas', r.batidas ?? '—') + c('Punições', r.punicoes ?? '—') : ''}
           <td data-label="Obs." class="${r.penalidade || r.obs ? '' : 'empty'}"><span>${[r.penalidade && '⏱ ' + esc(r.penalidade), r.obs && esc(r.obs)].filter(Boolean).join(' · ') || '—'}</span></td></tr>`).join('')}
       </table></div>
+      <ol class="mlist">${e.resultados.map(r => { const obs = [r.penalidade && '⏱ ' + esc(r.penalidade), r.obs && esc(r.obs)].filter(Boolean).join(' · ');
+        return `<li><span class="pos">${r.posicao ? ord(r.posicao) : 'DQ'}</span>
+        <span class="who">${driverBtn(r.codigo)}<span class="meta">${teamTag(r.codigo)}
+          <span class="${r.melhorVolta === fast ? 'purple' : ''}">${fmtTime(r.melhorVolta)}</span>${r.posGeral ? `<span>${r.posGeral}º geral</span>` : ''}</span>
+          ${obs ? `<span class="obs">${obs}</span>` : ''}</span>
+        <span class="pts">${r.pontos}<small>pts</small></span></li>`; }).join('')}</ol>
       <p class="note">Posição e pontos contam só os pilotos do campeonato. Em roxo: volta mais rápida entre eles.${e.fonte === 'planilha' ? ' Etapa registrada na planilha.' : ''}</p></div>`;
   }).join('');
 
