@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
 <title>Campeonato de Kart da Família</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -13,11 +14,7 @@
   --shadow:0 1px 2px rgba(15,23,36,.06),0 4px 14px rgba(15,23,36,.05);
   --font-head:"Space Grotesk","Inter",system-ui,sans-serif; --font-num:"JetBrains Mono",ui-monospace,Consolas,monospace;
 }
-@media (prefers-color-scheme: dark){
-  :root{ --bg:#0b1016; --panel:#131a22; --panel2:#19222c; --text:#e6edf5; --muted:#8a96a6; --border:#253140;
-    --accent:#4c9aff; --accent-ink:#06121f; --accent-soft:#132840; --good:#4ade80; --bad:#ff6b6b; --bad-soft:#3a1a1d; --purple:#b49cff;
-    --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.25); }
-}
+:root{color-scheme:light}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body.readonly .actions label,body.readonly .race-tools,body.readonly [data-rtab="notas"]{display:none!important}
